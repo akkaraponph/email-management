@@ -396,11 +396,16 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
   }
   
   return (
-    <Layout className="min-h-screen bg-gray-50">
-      <Content className="container mx-auto p-4 md:p-6">
-        <Header className="bg-white p-6 rounded-lg shadow-sm mb-6">
-          <div className="flex justify-between items-center">
-            <Space>
+    <Layout className="email-app-shell min-h-screen">
+      <Content className="email-app-content mx-auto w-full p-4 md:p-8">
+        <Header className="workspace-header mb-6 h-auto rounded-2xl px-5 py-5 md:px-7">
+          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+            <div>
+              <Text className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Email workspace</Text>
+              <Title level={2} className="workspace-title !mb-1 !text-slate-900">Template studio</Title>
+              <Text type="secondary">Create, refine, and export polished email campaigns.</Text>
+            </div>
+            <Space wrap size="middle">
               {selectedTemplate && (
                 <>
                   <Button 
@@ -449,10 +454,10 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
           </div>
         </Header>
         
-        <Card className="mb-6 shadow-sm">
+        <Card className="workspace-card mb-6" bordered={false}>
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
             <div className="w-full md:w-auto">
-              <Text strong className="block mb-2">Template</Text>
+              <Text strong className="mb-2 block text-slate-700">Current template</Text>
               <Select 
                 className="w-full min-w-[200px]"
                 value={selectedTemplate?.id}
@@ -474,7 +479,7 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
             <Divider type="vertical" className="hidden md:block h-10" />
             
             <div className="flex-grow">
-              <Text strong className="block mb-2">Create New Template</Text>
+              <Text strong className="mb-2 block text-slate-700">Start a new template</Text>
               <Space.Compact className="w-full">
                 <Input
                   placeholder="New template name"
@@ -496,21 +501,28 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
         </Card>
         
         {selectedTemplate ? (
-          <Card className="mb-6 shadow-sm">
-            <Title level={4} className="mb-1">{selectedTemplate.name}</Title>
+          <Card className="workspace-card template-summary mb-6" bordered={false}>
+            <div className="mb-6 flex flex-col gap-2 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <Text className="mb-1 block text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">Editing template</Text>
+                <Title level={3} className="workspace-title !mb-1 !text-slate-900">{selectedTemplate.name}</Title>
+              </div>
+              {selectedTemplate.isSystem && <Tag color="blue" className="self-start rounded-full px-3 py-1">System template</Tag>}
+            </div>
             {selectedTemplate.description && (
               <Paragraph type="secondary">{selectedTemplate.description}</Paragraph>
             )}
             
             {/* Variables Section */}
             <div className="mb-4">
-              <Text strong>Available variables: </Text>
-              <div className="mt-2">
+              <Text strong className="text-slate-700">Available variables</Text>
+              <Text type="secondary" className="ml-2 text-xs">Insert these placeholders anywhere in your message.</Text>
+              <div className="mt-3">
                 {selectedTemplate.variables.map(v => (
                   <Tag 
                     key={v.id} 
                     color="blue" 
-                    className="mr-1 mb-1"
+                    className="variable-tag mr-2 mb-2"
                   >
                     {`{{.${v.key}}}`}
                   </Tag>

@@ -2,8 +2,8 @@
 @import 'antd/dist/antd.css';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f7fb;
+  --foreground: #172033;
 }
 
 @theme inline {
@@ -13,15 +13,65 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+.email-workspace {
+  min-height: 100vh;
+}
+
+.email-app-shell {
+  background:
+    radial-gradient(circle at 3% 0%, rgba(99, 102, 241, 0.13), transparent 26rem),
+    linear-gradient(180deg, #fbfcff 0%, #f5f6fa 42%, #f8fafc 100%);
+}
+
+.email-app-content {
+  max-width: 1440px;
+}
+
+.workspace-header {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(14px);
+}
+
+.workspace-header .ant-layout-header {
+  height: auto;
+  line-height: normal;
+}
+
+.workspace-title {
+  letter-spacing: -0.025em;
+}
+
+.workspace-card {
+  border: 1px solid #e7eaf0 !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
+}
+
+.workspace-card .ant-card-body {
+  padding: 24px;
+}
+
+.template-summary {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+}
+
+.variable-tag {
+  border: 0 !important;
+  border-radius: 999px !important;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  padding: 3px 9px;
+}
+
+@media (max-width: 640px) {
+  .workspace-card .ant-card-body {
+    padding: 18px;
+  }
 }

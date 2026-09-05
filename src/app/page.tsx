@@ -29,8 +29,20 @@ export default function EditorPage() {
   }
   
   return (
-    <ConfigProvider>
-      <main>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#4f46e5',
+          colorInfo: '#4f46e5',
+          colorText: '#172033',
+          colorTextSecondary: '#64748b',
+          colorBorder: '#e2e8f0',
+          borderRadius: 12,
+          fontFamily: 'var(--font-geist-sans), Arial, sans-serif',
+        },
+      }}
+    >
+      <main className="email-workspace">
         <EmailTemplateManager 
           onSelectTemplate={handleSelectTemplate}
         />

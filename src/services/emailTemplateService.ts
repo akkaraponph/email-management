@@ -1,5 +1,6 @@
 // src/services/emailTemplateService.ts
-import { VariableType } from '@prisma/client';
+import type { VariableType } from '@prisma/client';
+import { getBrowserDemoTemplateStore } from '@/lib/demoTemplateStore';
 
 // Define the base interfaces
 export interface EmailTemplate {
@@ -77,42 +78,17 @@ export function getPreviewDataObject(template: EmailTemplateWithRelations): Reco
 
 // Fetch all templates
 export async function getAllTemplates(): Promise<EmailTemplateWithRelations[]> {
-  const response = await fetch(`/api/templates`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch templates');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().listTemplates() as EmailTemplateWithRelations[];
 }
 
 // Fetch a specific template by ID
 export async function getTemplateById(id: string): Promise<EmailTemplateWithRelations> {
-  const response = await fetch(`/api/templates/${id}`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch template');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().getTemplate(id) as EmailTemplateWithRelations;
 }
 
 // Create a new template
 export async function createTemplate(template: CreateTemplatePayload): Promise<EmailTemplateWithRelations> {
-  const response = await fetch(`/api/templates`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(template),
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to create template');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().createTemplate(template) as EmailTemplateWithRelations;
 }
 
 // Update a template
@@ -120,32 +96,12 @@ export async function updateTemplate(
   id: string, 
   template: Partial<CreateTemplatePayload>
 ): Promise<EmailTemplateWithRelations> {
-  const response = await fetch(`/api/templates/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(template),
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to update template');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().updateTemplate(id, template) as EmailTemplateWithRelations;
 }
 
 // Delete a template
 export async function deleteTemplate(id: string): Promise<void> {
-  const response = await fetch(`/api/templates/${id}`, {
-    method: 'DELETE',
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to delete template');
-  }
+  getBrowserDemoTemplateStore().deleteTemplate(id);
 }
 
 // Add a variable to a template
@@ -153,20 +109,7 @@ export async function addVariable(
   templateId: string,
   variable: Omit<TemplateVariable, 'id' | 'createdAt' | 'updatedAt' | 'emailTemplateId'>
 ): Promise<TemplateVariable> {
-  const response = await fetch(`/api/templates/${templateId}/variables`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(variable),
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to add variable');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().addVariable(templateId, variable) as TemplateVariable;
 }
 
 // Update a variable
@@ -175,43 +118,17 @@ export async function updateVariable(
   variableId: string,
   variable: Partial<Omit<TemplateVariable, 'id' | 'createdAt' | 'updatedAt' | 'emailTemplateId'>>
 ): Promise<TemplateVariable> {
-  const response = await fetch(`/api/templates/${templateId}/variables/${variableId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(variable),
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to update variable');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().updateVariable(templateId, variableId, variable) as TemplateVariable;
 }
 
 // Delete a variable
 export async function deleteVariable(templateId: string, variableId: string): Promise<void> {
-  const response = await fetch(`/api/templates/${templateId}/variables/${variableId}`, {
-    method: 'DELETE',
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to delete variable');
-  }
+  getBrowserDemoTemplateStore().deleteVariable(templateId, variableId);
 }
 
 // Get all variables for a template
 export async function getVariablesByTemplateId(templateId: string): Promise<TemplateVariable[]> {
-  const response = await fetch(`/api/templates/${templateId}/variables`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch variables');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().getVariables(templateId) as TemplateVariable[];
 }
 
 // Update preview data for a template
@@ -220,34 +137,15 @@ export async function updatePreviewData(
   previewData: Record<string, any>,
   name?: string
 ): Promise<PreviewData> {
-  const response = await fetch(`/api/templates/${templateId}/preview`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ 
-      data: previewData,
-      name: name || 'Default Preview'
-    }),
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to update preview data');
-  }
-  
-  return response.json();
+  return getBrowserDemoTemplateStore().updatePreviewData(templateId, previewData, name) as PreviewData;
 }
 
 // Get preview data for a template
 export async function getPreviewData(templateId: string): Promise<PreviewData> {
-  const response = await fetch(`/api/templates/${templateId}/preview`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch preview data');
-  }
-  
-  return response.json();
+  const template = getBrowserDemoTemplateStore().getTemplate(templateId);
+  const previewData = template.previewData[0];
+  if (!previewData) throw new Error('Preview data not found');
+  return previewData as PreviewData;
 }
 
 
