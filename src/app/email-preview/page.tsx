@@ -243,24 +243,22 @@ export default function EmailPreviewPage() {
       key: 'test-data',
       label: <span><UserOutlined /> Test Data</span>,
       children: (
-        <div className="variable-editor">
-          <Paragraph type="secondary" className="mb-4">
+        <div className="variable-editor h-full flex flex-col p-1">
+          <Paragraph type="secondary" className="mb-3 text-xs">
             Modify test data values to see how your email will look with different content.
           </Paragraph>
           
-          <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-1">
-            {availableVariables.map((key) => (
-              <div key={key} className="mb-4">
-                <Form.Item
-                  label={
-                    <Text strong className="capitalize">
-                      {key.replace(/([A-Z])/g, ' $1')}
-                    </Text>
-                  }
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                  className="mb-1"
-                >
+          <div className="flex-1 overflow-y-auto pr-2 space-y-3 min-h-0">
+            {availableVariables.length === 0 ? (
+              <div className="text-center py-10 text-slate-400 text-xs">
+                No variables found in this template.
+              </div>
+            ) : (
+              availableVariables.map((key) => (
+                <div key={key} className="bg-slate-50/80 p-2.5 rounded-lg border border-slate-200/60">
+                  <div className="text-xs font-semibold text-slate-700 capitalize mb-1">
+                    {key.replace(/([A-Z])/g, ' $1')}
+                  </div>
                   <Input
                     value={previewData[key] || ''}
                     onChange={(e) => handleUpdatePreviewData({
@@ -268,16 +266,18 @@ export default function EmailPreviewPage() {
                       [key]: e.target.value
                     })}
                     placeholder={`Enter value for ${key}`}
+                    size="small"
+                    className="bg-white"
                     allowClear
                   />
-                </Form.Item>
-              </div>
-            ))}
+                </div>
+              ))
+            )}
           </div>
           
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <Paragraph type="secondary" className="text-xs">
-              <InfoCircleOutlined /> Test data is saved in your browser and will be available the next time you preview this template.
+          <div className="mt-3 pt-3 border-t border-slate-200/80 shrink-0">
+            <Paragraph type="secondary" className="text-[11px] !mb-0 leading-tight">
+              <InfoCircleOutlined className="mr-1 text-indigo-500" /> Changes apply live and persist locally in browser.
             </Paragraph>
           </div>
         </div>
@@ -416,29 +416,31 @@ export default function EmailPreviewPage() {
   }
 
   return (
-    <Layout className="min-h-screen bg-slate-50/70">
+    <Layout className="h-screen flex flex-col overflow-hidden bg-slate-100/70">
+      {/* Unified Studio Preview Bar */}
       <Header 
-        className="studio-topbar px-4 sm:px-6 py-2.5 flex items-center justify-between border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-40"
+        className="studio-topbar px-4 sm:px-6 py-2.5 flex items-center justify-between border-b border-slate-200/80 bg-white/95 backdrop-blur-md shrink-0 z-40"
         style={{
           height: 'auto',
           lineHeight: 'normal',
-          padding: '10px 24px',
+          padding: '10px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           background: 'rgba(255, 255, 255, 0.95)',
         }}
       >
-        <div className="flex items-center flex-1 gap-3 min-w-0">
+        {/* Left: Navigation & Template Title */}
+        <div className="flex items-center gap-3 min-w-0">
           <Button
             type="default"
             icon={<ArrowLeftOutlined />}
             onClick={handleBackToEditor}
-            className="font-medium shrink-0"
+            className="font-medium shrink-0 shadow-2xs"
           >
             Back to Studio
           </Button>
-          <div className="hidden sm:flex items-center gap-2.5 border-l border-slate-200 pl-3 min-w-0">
+          <div className="hidden md:flex items-center gap-2.5 border-l border-slate-200 pl-3 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shrink-0">
               <MailOutlined />
             </div>
@@ -447,96 +449,143 @@ export default function EmailPreviewPage() {
                 {templateName}
               </div>
               <div className="text-slate-400 text-xs leading-none">
-                Full Page Email Preview
+                Full Viewport Preview
               </div>
             </div>
           </div>
         </div>
         
-        <Space className="print:hidden">
-          <Dropdown menu={{ items: viewModeItems }} placement="bottomRight">
-            <Button size="small">
-              {viewMode === 'desktop' && <DesktopOutlined className="mr-1" />}
-              {viewMode === 'tablet' && <TabletOutlined className="mr-1" />}
-              {viewMode === 'mobile' && <MobileFilled className="mr-1" />}
-              <span>{viewMode.charAt(0).toUpperCase() + viewMode.slice(1)} View</span>
-            </Button>
-          </Dropdown>
-          
+        {/* Right: Device Switcher, Zoom, Print, Export & Sider Toggle */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 print:hidden">
+          {/* Responsive View Switcher */}
+          <Radio.Group 
+            value={viewMode} 
+            onChange={(e) => setViewMode(e.target.value)}
+            optionType="button"
+            buttonStyle="solid"
+            size="small"
+            className="shrink-0"
+          >
+            <Radio.Button value="desktop">
+              <DesktopOutlined className="mr-1" />
+              <span className="hidden sm:inline">Desktop</span>
+            </Radio.Button>
+            <Radio.Button value="tablet">
+              <TabletOutlined className="mr-1" />
+              <span className="hidden sm:inline">Tablet</span>
+            </Radio.Button>
+            <Radio.Button value="mobile">
+              <MobileFilled className="mr-1" />
+              <span className="hidden sm:inline">Mobile</span>
+            </Radio.Button>
+          </Radio.Group>
+
+          {/* Quick Zoom Controller */}
+          <div className="hidden lg:flex items-center bg-slate-50 border border-slate-200/80 rounded-md px-1 py-0.5">
+            <Button 
+              type="text"
+              size="small"
+              icon={<CompressOutlined />}
+              onClick={() => handleZoom(zoomLevel - 10)}
+              disabled={zoomLevel <= 60}
+              className="text-slate-500"
+            />
+            <span className="text-xs font-mono text-slate-600 px-1.5 min-w-[42px] text-center select-none">
+              {zoomLevel}%
+            </span>
+            <Button 
+              type="text"
+              size="small"
+              icon={<ExpandOutlined />}
+              onClick={() => handleZoom(zoomLevel + 10)}
+              disabled={zoomLevel >= 140}
+              className="text-slate-500"
+            />
+          </div>
+
+          <Divider type="vertical" className="hidden sm:block h-5 my-0" />
+
+          {/* Print Button */}
+          <Button 
+            size="small" 
+            icon={<PrinterOutlined />} 
+            onClick={handlePrintPreview}
+            className="hidden sm:inline-flex items-center"
+          >
+            Print
+          </Button>
+
+          {/* Export Dropdown */}
           <Dropdown menu={{ items: exportItems }} placement="bottomRight">
-            <Button type="primary" size="small" icon={<DownloadOutlined />}>
+            <Button type="primary" size="small" icon={<DownloadOutlined />} className="shadow-xs font-medium">
               Export
             </Button>
           </Dropdown>
           
+          {/* Sider Toggle */}
           <Tooltip title={siderCollapsed ? "Show Options" : "Hide Options"}>
             <Button
-              type="text"
+              type={siderCollapsed ? "default" : "text"}
               size="small"
               icon={siderCollapsed ? <SettingOutlined /> : <CompressOutlined />}
               onClick={() => setSiderCollapsed(!siderCollapsed)}
+              className="text-slate-600"
             />
           </Tooltip>
-        </Space>
+        </div>
       </Header>
 
-      <Layout>
-        <Content className="email-canvas-viewport py-6 px-4">
-          <div className={`
-            mx-auto transition-all duration-300 ease-in-out
-            ${viewMode === 'desktop' ? 'max-w-5xl' : ''}
-            ${viewMode === 'tablet' ? 'max-w-lg' : ''}
-            ${viewMode === 'mobile' ? 'max-w-xs' : ''}
-          `}>
-            <Card 
-              className="shadow-lg overflow-hidden print:shadow-none"
-              variant="borderless"
-            >
-              <div 
-                className="bg-gray-100 rounded print:bg-white print:p-0 overflow-hidden"
-                style={{
-                  transform: `scale(${zoomLevel / 100})`,
-                  transformOrigin: 'top left',
-                  width: `${100 * (100 / zoomLevel)}%`,
-                  height: `${100 * (100 / zoomLevel)}%`
-                }}
-              >
-                <EmailPreview 
-                  html={templateHtml}
-                  previewData={previewData}
-                  templateId={templateId}
-                  availableVariables={availableVariables}
-                  onUpdatePreviewData={handleUpdatePreviewData}
-                />
-              </div>
-            </Card>
+      {/* Main Workspace Layout (Full Viewport) */}
+      <Layout className="flex-1 flex flex-row min-h-0 overflow-hidden">
+        {/* Email Canvas Viewport (Scalable & Full Scroll) */}
+        <Content className="email-canvas-viewport flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center">
+          <div 
+            className="w-full flex justify-center transition-all duration-300 pb-12"
+            style={{
+              transform: zoomLevel !== 100 ? `scale(${zoomLevel / 100})` : undefined,
+              transformOrigin: 'top center',
+            }}
+          >
+            <EmailPreview 
+              html={templateHtml}
+              previewData={previewData}
+              templateId={templateId}
+              templateName={templateName}
+              availableVariables={availableVariables}
+              onUpdatePreviewData={handleUpdatePreviewData}
+              showToolbar={false}
+              viewMode={viewMode}
+            />
           </div>
         </Content>
 
+        {/* Right Options Sidebar (Full Height Scrollable) */}
         <Sider
-          width={320}
+          width={340}
           theme="light"
           collapsible
           collapsed={siderCollapsed}
           onCollapse={setSiderCollapsed}
           collapsedWidth={0}
           trigger={null}
-          className="print:hidden border-l border-gray-200"
+          className="print:hidden border-l border-slate-200/80 bg-white h-full flex flex-col overflow-hidden"
         >
-          <Tabs
-            defaultActiveKey="test-data"
-            activeKey={activeTab}
-            onChange={setActiveTab}
-            items={sidebarTabs}
-            tabBarStyle={{ padding: '0 16px', marginBottom: 0 }}
-            className="h-full"
-          />
+          <div className="h-full flex flex-col overflow-hidden p-2">
+            <Tabs
+              defaultActiveKey="test-data"
+              activeKey={activeTab}
+              onChange={setActiveTab}
+              items={sidebarTabs}
+              tabBarStyle={{ padding: '0 8px', marginBottom: 8 }}
+              className="h-full flex flex-col [&_.ant-tabs-content-holder]:flex-1 [&_.ant-tabs-content-holder]:overflow-hidden [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full [&_.ant-tabs-tabpane]:flex [&_.ant-tabs-tabpane]:flex-col"
+            />
+          </div>
         </Sider>
       </Layout>
       
       <FloatButton.Group
         trigger="hover"
-        className="print:hidden"
+        className="print:hidden sm:hidden"
         icon={<ToolOutlined />}
         tooltip="Tools"
       >

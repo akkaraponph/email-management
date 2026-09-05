@@ -115,7 +115,7 @@ const VariableTabs: React.FC<VariableTabsProps> = ({
         </span>
       ),
       children: (
-        <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto pr-1">
+        <div className="flex flex-col gap-2 flex-1 overflow-y-auto pr-1 min-h-0">
           {availableVariables.length === 0 ? (
             <div className="text-center py-6 text-slate-400 text-xs">
               No variables added yet.
@@ -178,7 +178,7 @@ const VariableTabs: React.FC<VariableTabsProps> = ({
         </span>
       ),
       children: (
-        <div className="flex flex-col gap-3 max-h-[360px] overflow-y-auto pr-1">
+        <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-1 min-h-0">
           {availableVariables.length === 0 ? (
             <div className="text-center py-6 text-slate-400 text-xs">
               Add variables first to configure mock values.
@@ -213,6 +213,7 @@ const VariableTabs: React.FC<VariableTabsProps> = ({
       onChange={setActiveTab}
       items={tabItems}
       size="small"
+      className="h-full flex flex-col [&_.ant-tabs-content-holder]:flex-1 [&_.ant-tabs-content-holder]:overflow-hidden [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full [&_.ant-tabs-tabpane]:flex [&_.ant-tabs-tabpane]:flex-col"
     />
   );
 };

@@ -767,12 +767,12 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
         </span>
       ),
       children: (
-        <div className="flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0 h-full">
           {/* Editor Toolbar */}
           <EditorToolbar />
           
           {/* Main Studio Area */}
-          <div className="flex flex-col lg:flex-row min-h-[620px]">
+          <div className="flex-1 flex flex-col lg:flex-row min-h-0 h-full overflow-hidden">
             {/* Center Stage: Canvas */}
             <div className="flex-1 email-canvas-viewport p-4 sm:p-6 overflow-y-auto flex flex-col items-center">
               {/* EDIT MODE */}
@@ -782,8 +782,8 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                     deviceViewport === 'mobile' 
                       ? 'max-w-[375px]' 
                       : deviceViewport === 'tablet' 
-                        ? 'max-w-[480px]' 
-                        : 'max-w-[650px]'
+                        ? 'max-w-[500px]' 
+                        : 'max-w-[780px]'
                   }`}
                 >
                   <div className="bg-slate-50/90 border-b border-slate-100 px-4 py-2 flex items-center justify-between text-xs text-slate-500 rounded-t-lg">
@@ -792,7 +792,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                       {deviceViewport} Viewport
                     </span>
                   </div>
-                  <div className="p-4 sm:p-6 bg-white min-h-[440px] rounded-b-lg">
+                  <div className="p-4 sm:p-6 bg-white min-h-[calc(100vh-270px)] rounded-b-lg">
                     <EditorContent editor={editor} className={editorClassNames} />
                   </div>
                 </div>
@@ -800,14 +800,14 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
 
               {/* SPLIT VIEW MODE: WYSIWYG on Left, Live Mock Output on Right */}
               {editorViewMode === 'split' && (
-                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
                   {/* Left: Editor */}
                   <div className="email-paper overflow-hidden flex flex-col rounded-lg">
                     <div className="bg-slate-50 border-b border-slate-100 px-4 py-2 text-xs font-semibold text-slate-700 flex justify-between items-center">
                       <span>Editor</span>
                       <span className="text-slate-400 font-normal text-[11px]">Type & format</span>
                     </div>
-                    <div className="p-4 sm:p-5 bg-white min-h-[440px] flex-1">
+                    <div className="p-4 sm:p-5 bg-white min-h-[calc(100vh-270px)] flex-1 overflow-y-auto">
                       <EditorContent editor={editor} className={editorClassNames} />
                     </div>
                   </div>
@@ -822,7 +822,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                       <span className="text-indigo-500 font-mono text-[10px]">Real-time Interpolation</span>
                     </div>
                     <div 
-                      className="p-4 sm:p-5 min-h-[440px] prose max-w-none overflow-y-auto bg-white flex-1 text-slate-800"
+                      className="p-4 sm:p-5 min-h-[calc(100vh-270px)] prose max-w-none overflow-y-auto bg-white flex-1 text-slate-800"
                       dangerouslySetInnerHTML={{ __html: getPreviewHTML() }}
                     />
                   </div>
@@ -836,8 +836,8 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                     deviceViewport === 'mobile' 
                       ? 'max-w-[375px]' 
                       : deviceViewport === 'tablet' 
-                        ? 'max-w-[480px]' 
-                        : 'max-w-[650px]'
+                        ? 'max-w-[500px]' 
+                        : 'max-w-[780px]'
                   }`}
                 >
                   <div className="bg-slate-50 border-b border-slate-100 p-4 rounded-t-lg">
@@ -850,7 +850,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                     </div>
                   </div>
                   <div 
-                    className="p-4 sm:p-6 min-h-[440px] prose max-w-none overflow-y-auto bg-white rounded-b-lg text-slate-800"
+                    className="p-4 sm:p-6 min-h-[calc(100vh-270px)] prose max-w-none overflow-y-auto bg-white rounded-b-lg text-slate-800"
                     dangerouslySetInnerHTML={{ __html: getPreviewHTML() }}
                   />
                 </div>
@@ -858,9 +858,9 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
             </div>
             
             {/* Right Studio Sidebar */}
-            <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-slate-200/80 bg-white p-4 flex flex-col">
+            <div className="w-full lg:w-84 xl:w-96 border-t lg:border-t-0 lg:border-l border-slate-200/80 bg-white p-4 flex flex-col h-full overflow-hidden shrink-0">
               {/* Sidebar Header & Add Variable Button */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3 shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">Template Data</span>
                 <AddVariableComponent 
                   existingVariables={variables}
@@ -870,7 +870,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
               </div>
 
               {/* Quick Variable Insert Pills */}
-              <div className="mb-4">
+              <div className="mb-4 shrink-0">
                 <Text className="text-xs text-slate-400 block mb-1.5">Click tag to insert into editor:</Text>
                 <div className="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto p-2 bg-slate-50/70 border border-slate-100 rounded-lg">
                   {variables.length === 0 ? (
@@ -900,10 +900,10 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                 </div>
               </div>
 
-              <Divider className="my-2" />
+              <Divider className="my-2 shrink-0" />
 
               {/* Variables List & Test Data Values */}
-              <div className="flex-1">
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <VariableTabs 
                   availableVariables={variables}
                   insertVariable={insertVariable}
@@ -952,12 +952,12 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   }
 
   return (
-    <div className="rounded-xl border border-slate-200/90 bg-white shadow-sm overflow-hidden">
+    <div className="flex-1 flex flex-col h-full rounded-xl border border-slate-200/90 bg-white shadow-xs overflow-hidden">
       <Tabs 
         activeKey={activeTabKey} 
         onChange={setActiveTabKey}
         items={tabItems}
-        className="email-template-editor-tabs"
+        className="email-template-editor-tabs h-full flex flex-col [&_.ant-tabs-content-holder]:flex-1 [&_.ant-tabs-content-holder]:flex [&_.ant-tabs-content]:flex-1 [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full [&_.ant-tabs-tabpane]:flex [&_.ant-tabs-tabpane]:flex-col [&_.ant-tabs-tabpane]:min-h-0"
         tabBarStyle={{ padding: '4px 16px 0 16px', marginBottom: 0 }}
       />
       

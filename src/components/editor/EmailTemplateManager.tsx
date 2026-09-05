@@ -407,10 +407,10 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
   }
   
   return (
-    <div className="email-app-shell min-h-screen flex flex-col bg-slate-50/70">
+    <div className="email-app-shell h-screen flex flex-col overflow-hidden bg-slate-100/70">
       {/* Studio Top Navigation Bar */}
-      <header className="studio-topbar px-4 sm:px-6 py-3 border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <header className="studio-topbar px-4 lg:px-6 py-2.5 border-b border-slate-200/80 bg-white/95 backdrop-blur-md shrink-0 z-40">
+        <div className="w-full flex flex-wrap items-center justify-between gap-3">
           {/* Brand & Template Selector */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 flex items-center justify-center text-white shadow-xs">
@@ -540,7 +540,7 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
       </header>
 
       {/* Main Workspace Body */}
-      <main className="max-w-[1600px] w-full mx-auto p-4 sm:p-6 flex-1 flex flex-col">
+      <main className="w-full flex-1 flex flex-col min-h-0 p-2 sm:p-3 lg:p-4 overflow-hidden">
         {selectedTemplate ? (
           <EmailTemplateEditor 
             key={forceEditorKey}
