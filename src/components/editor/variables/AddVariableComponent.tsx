@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Input, Modal, Form, message, Select } from 'antd';
-import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Input, Modal, Form, message, Select, Checkbox, Typography } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { addVariable } from '@/services/emailTemplateService';
 
 const { Option } = Select;
+const { Text } = Typography;
 
 interface AddVariableComponentProps {
   existingVariables: string[];
@@ -67,7 +68,7 @@ const AddVariableComponent: React.FC<AddVariableComponentProps> = ({
             defaultValue: values.defaultValue || null
           });
           
-          message.success(`Variable {{.${variableName}}} added to database successfully`);
+          message.success(`Variable {{.${variableName}}} created successfully`);
         } catch (error) {
           console.error('Error adding variable to database:', error);
           message.error('Failed to add variable to database');
@@ -89,39 +90,47 @@ const AddVariableComponent: React.FC<AddVariableComponentProps> = ({
   return (
     <>
       <Button 
-        type="dashed" 
+        type="default" 
+        size="small"
         icon={<PlusOutlined />} 
         onClick={showModal}
-        className="mb-4"
+        className="font-medium text-indigo-600 hover:!text-indigo-700 hover:!border-indigo-300"
       >
-        Add New Variable
+        New Variable
       </Button>
       
       <Modal
-        title="Add New Variable"
+        title={
+          <div>
+            <div className="text-base font-semibold text-slate-900">Add Variable</div>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">Create a dynamic placeholder for your email templates</p>
+          </div>
+        }
         open={isModalVisible}
         onCancel={handleCancel}
         onOk={handleSubmit}
-        okText="Add"
+        okText="Create Variable"
         confirmLoading={loading}
+        centered
+        width={480}
       >
         <Form
           form={form}
           layout="vertical"
+          className="mt-4"
         >
           <Form.Item
-            label="Variable Name (Key)"
+            label={<span className="text-xs font-semibold text-slate-700">Variable Key (camelCase)</span>}
             name="variableName"
             rules={[
               { required: true, message: 'Please input a variable name' },
               { validator: validateKeyUniqueness }
             ]}
-            help="This will be converted to camelCase format automatically"
+            help="Used in the template as {{.variableName}}"
           >
             <Input 
-              placeholder="e.g. firstName, companyName, orderDate" 
+              placeholder="e.g. firstName, companyName, orderNumber" 
               onChange={(e) => {
-                // Auto-format the name as the user types
                 const formattedName = formatVariableKey(e.target.value);
                 form.setFieldValue('variableName', formattedName);
               }}
@@ -129,41 +138,43 @@ const AddVariableComponent: React.FC<AddVariableComponentProps> = ({
           </Form.Item>
           
           <Form.Item
-            label="Display Name"
+            label={<span className="text-xs font-semibold text-slate-700">Display Label</span>}
             name="displayName"
-            help="Human-readable name for this variable"
+            help="Human-readable title shown in forms"
           >
             <Input placeholder="e.g. First Name, Company Name" />
           </Form.Item>
           
-          <Form.Item
-            label="Variable Type"
-            name="variableType"
-            initialValue="TEXT"
-          >
-            <Select>
-              <Option value="TEXT">Text</Option>
-              <Option value="EMAIL">Email</Option>
-              <Option value="NUMBER">Number</Option>
-              <Option value="DATE">Date</Option>
-              <Option value="BOOLEAN">Yes/No</Option>
-              <Option value="URL">URL</Option>
-            </Select>
-          </Form.Item>
+          <div className="grid grid-cols-2 gap-3">
+            <Form.Item
+              label={<span className="text-xs font-semibold text-slate-700">Data Type</span>}
+              name="variableType"
+              initialValue="TEXT"
+            >
+              <Select>
+                <Option value="TEXT">Text</Option>
+                <Option value="EMAIL">Email</Option>
+                <Option value="NUMBER">Number</Option>
+                <Option value="DATE">Date</Option>
+                <Option value="BOOLEAN">Yes / No</Option>
+                <Option value="URL">Web URL</Option>
+              </Select>
+            </Form.Item>
+            
+            <Form.Item
+              label={<span className="text-xs font-semibold text-slate-700">Default Value</span>}
+              name="defaultValue"
+            >
+              <Input placeholder="Fallback value" />
+            </Form.Item>
+          </div>
           
           <Form.Item
-            label="Default Value"
-            name="defaultValue"
-          >
-            <Input placeholder="Default value when no data is provided" />
-          </Form.Item>
-          
-          <Form.Item
-            label="Description"
+            label={<span className="text-xs font-semibold text-slate-700">Description (Optional)</span>}
             name="description"
           >
             <Input.TextArea 
-              placeholder="Optional description of what this variable is used for"
+              placeholder="What is this variable used for?"
               rows={2}
             />
           </Form.Item>
@@ -171,15 +182,18 @@ const AddVariableComponent: React.FC<AddVariableComponentProps> = ({
           <Form.Item
             name="required"
             valuePropName="checked"
+            className="mb-3"
           >
-            <input type="checkbox" /> Required variable
+            <Checkbox className="text-slate-700">
+              Required field in recipient data
+            </Checkbox>
           </Form.Item>
           
-          <div className="text-gray-500 text-sm">
-            <p>This variable will be available in your template using:</p>
-            <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded">
+          <div className="bg-indigo-50/60 border border-indigo-100 rounded-lg p-3">
+            <Text className="text-xs text-slate-600 block mb-1">Preview placeholder token:</Text>
+            <code className="variable-pill text-xs">
               {'{{.'}
-              {form.getFieldValue('variableName') || 'variableName'}
+              {form.getFieldValue('variableName') || 'yourVariable'}
               {'}}'}
             </code>
           </div>

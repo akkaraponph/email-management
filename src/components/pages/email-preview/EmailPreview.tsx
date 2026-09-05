@@ -12,8 +12,10 @@ import {
   Space, 
   Tooltip,
   Select,
-  Spin
+  Spin,
+  Radio
 } from 'antd'
+import type { RadioChangeEvent } from 'antd'
 import { 
   MailOutlined, 
   PrinterOutlined, 
@@ -137,25 +139,36 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
   }
 
   return (
-    <Card className="shadow-lg rounded-lg border-0">
+    <div className="rounded-xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
       {/* Preview Header with Toolbar */}
-      <div className="bg-white border-b mb-4 pb-4">
-        <Space direction="horizontal" className="flex flex-wrap gap-2 justify-between">
-          <Text strong className="text-lg">Email Preview</Text>
+      <div className="bg-slate-50/70 border-b border-slate-200/80 px-5 py-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <Text strong className="text-sm text-slate-800">Email Preview</Text>
+            <span className="text-xs text-slate-400 font-mono">({viewMode})</span>
+          </div>
           
-          <Space>
-            <Tooltip title="Toggle mobile view">
-              <Button 
-                icon={viewMode === 'mobile' ? <LaptopOutlined /> : <MobileOutlined />}
-                onClick={() => setViewMode(viewMode === 'mobile' ? 'desktop' : 'mobile')}
-                type={viewMode === 'mobile' ? 'primary' : 'default'}
-              />
-            </Tooltip>
+          <Space size="middle">
+            <Radio.Group 
+              value={viewMode} 
+              onChange={(e: RadioChangeEvent) => setViewMode(e.target.value)}
+              size="small"
+              optionType="button"
+              buttonStyle="solid"
+            >
+              <Radio.Button value="desktop">
+                <LaptopOutlined className="mr-1.5" /> Desktop
+              </Radio.Button>
+              <Radio.Button value="mobile">
+                <MobileOutlined className="mr-1.5" /> Mobile
+              </Radio.Button>
+            </Radio.Group>
+
             <Tooltip title="Print preview">
-              <Button icon={<PrinterOutlined />} onClick={handlePrintPreview} />
+              <Button icon={<PrinterOutlined />} size="small" onClick={handlePrintPreview} />
             </Tooltip>
             
-            {/* Export Options Component */}
             <ExportOptionsComponent
               html={previewHtml}
               rawTemplateHtml={html}
@@ -164,66 +177,50 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
               templateName={templateName}
             />
           </Space>
-        </Space>
+        </div>
       </div>
       
       {/* Main Preview Area */}
-      <div className="flex flex-col lg:flex-row">
-        <div className={`${showVariablePanel ? 'w-full lg:w-3/4 mb-4 lg:mb-0 lg:pr-4' : 'w-full'}`}>
-          <div className={`bg-gray-100 p-4 ${viewMode === 'mobile' ? 'max-w-sm mx-auto' : 'w-full'}`}>
-            <Card 
-              className="shadow-md mx-auto" 
-              styles={{ body: { padding: viewMode === 'mobile' ? '16px' : '32px' } }}
-            >
-              <div className="flex items-center mb-4 border-b pb-2">
-                <MailOutlined className="text-blue-500 mr-2" />
-                <Text strong>Email Subject Would Appear Here</Text>
+      <div className="email-canvas-viewport p-4 md:p-8 flex justify-center">
+        <div className={`transition-all duration-300 w-full ${viewMode === 'mobile' ? 'max-w-sm' : 'max-w-2xl'}`}>
+          <div className="email-paper overflow-hidden">
+            {/* Simulated Email Client Header */}
+            <div className="bg-slate-50 border-b border-slate-100 p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <MailOutlined className="text-indigo-600 text-sm" />
+                <span className="text-xs font-semibold text-slate-800">Preview Subject: {templateName}</span>
               </div>
-              
+              <div className="text-[11px] text-slate-400 flex items-center gap-2">
+                <span>To: <code className="text-slate-600">{previewData.email || 'recipient@example.com'}</code></span>
+                <span>•</span>
+                <span>From: <code className="text-slate-600">hello@yourcompany.com</code></span>
+              </div>
+            </div>
+            
+            <div className="p-4 sm:p-6 bg-white min-h-[360px]">
               {loading ? (
-                <div className="flex justify-center items-center py-20">
-                  <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-                  <Text className="ml-2">Loading preview...</Text>
+                <div className="flex flex-col justify-center items-center py-20 text-slate-400">
+                  <Spin indicator={<LoadingOutlined style={{ fontSize: 24, color: '#4f46e5' }} spin />} />
+                  <Text className="mt-3 text-xs text-slate-500">Rendering preview with mock data...</Text>
                 </div>
               ) : (
                 <div 
-                  className="prose max-w-none"
+                  className="prose max-w-none text-slate-800"
                   dangerouslySetInnerHTML={{ __html: previewHtml }}
                 />
               )}
-            </Card>
+            </div>
           </div>
         </div>
-        
-        {showVariablePanel && (
-          <div className="w-full lg:w-1/4">
-            <Card className="h-full shadow-sm">
-              <Text strong className="block mb-4">Test Data</Text>
-              <div className="flex flex-col gap-3 max-h-[400px] overflow-auto">
-                {availableVariables.map((key) => (
-                  <div key={key} className="mb-2">
-                    <Text className="text-xs text-gray-500 block mb-1">{key}</Text>
-                    <input
-                      value={previewData[key] || ''}
-                      onChange={(e) => handleUpdatePreviewData(key, e.target.value)}
-                      className="w-full p-2 border rounded text-sm"
-                      placeholder={`Value for ${key}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        )}
       </div>
       
       {/* Status information about template */}
       {!loading && !headerFooterApplied && (
-        <div className="mt-4 p-2 bg-yellow-50 text-yellow-700 text-sm rounded border border-yellow-200">
-          <Text strong>Note:</Text> No custom header/footer was found for this template. Using content only.
+        <div className="p-3 bg-amber-50/80 text-amber-800 text-xs border-t border-amber-100 flex items-center justify-between">
+          <span><strong>Note:</strong> No custom header or footer configured for this template. Using core content body.</span>
         </div>
       )}
-    </Card>
+    </div>
   )
 }
 

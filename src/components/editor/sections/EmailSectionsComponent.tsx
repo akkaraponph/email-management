@@ -199,7 +199,7 @@ const EmailSectionsComponent: React.FC<EmailSectionsComponentProps> = ({ editor 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Button Text</label>
               <Input 
                 value={buttonText} 
                 onChange={(e) => setButtonText(e.target.value)} 
@@ -208,7 +208,7 @@ const EmailSectionsComponent: React.FC<EmailSectionsComponentProps> = ({ editor 
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Destination URL</label>
               <Input 
                 value={buttonUrl} 
                 onChange={(e) => setButtonUrl(e.target.value)} 
@@ -217,69 +217,86 @@ const EmailSectionsComponent: React.FC<EmailSectionsComponentProps> = ({ editor 
             </div>
             
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Background</label>
                 <ColorPicker
                   value={buttonBgColor}
                   onChange={(color) => setButtonBgColor(color.toHexString())}
                   showText
+                  presets={[
+                    {
+                      label: 'Theme Colors',
+                      colors: ['#4f46e5', '#0f172a', '#2563eb', '#10b981', '#f59e0b', '#ef4444'],
+                    },
+                  ]}
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Text Color</label>
                 <ColorPicker
                   value={buttonTextColor}
                   onChange={(color) => setButtonTextColor(color.toHexString())}
                   showText
+                  presets={[
+                    {
+                      label: 'Presets',
+                      colors: ['#ffffff', '#0f172a', '#334155', '#4f46e5'],
+                    },
+                  ]}
                 />
               </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Button Width (px)</label>
-              <InputNumber 
-                min={100} 
-                max={600} 
-                value={buttonWidth} 
-                onChange={(value) => setButtonWidth(value || 200)} 
-                className="w-full"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Width (px)</label>
+                <InputNumber 
+                  min={100} 
+                  max={600} 
+                  value={buttonWidth} 
+                  onChange={(value) => setButtonWidth(value || 200)} 
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Alignment</label>
+                <Radio.Group 
+                  options={[
+                    { label: 'Left', value: 'left' },
+                    { label: 'Center', value: 'center' },
+                    { label: 'Right', value: 'right' },
+                  ]} 
+                  onChange={(e) => setButtonAlignment(e.target.value)} 
+                  value={buttonAlignment} 
+                  optionType="button" 
+                  buttonStyle="solid"
+                  className="w-full"
+                />
+              </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Alignment</label>
-              <Radio.Group 
-                options={[
-                  { label: 'Left', value: 'left' },
-                  { label: 'Center', value: 'center' },
-                  { label: 'Right', value: 'right' },
-                ]} 
-                onChange={(e) => setButtonAlignment(e.target.value)} 
-                value={buttonAlignment} 
-                optionType="button" 
-                buttonStyle="solid"
-              />
-            </div>
-            
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-500 mb-2">Preview:</p>
-              <div style={{ textAlign: buttonAlignment as React.CSSProperties['textAlign'] }}>
-                <button 
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <p className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Live Preview</p>
+              <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl" style={{ textAlign: buttonAlignment as React.CSSProperties['textAlign'] }}>
+                <span 
                   style={{
+                    display: 'inline-block',
                     backgroundColor: buttonBgColor,
                     color: buttonTextColor,
-                    padding: '10px 20px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
+                    padding: '12px 24px',
+                    borderRadius: '6px',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    letterSpacing: '0.01em',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.06)',
                     width: `${buttonWidth}px`,
                     maxWidth: '100%',
+                    textAlign: 'center',
                   }}
                 >
-                  {buttonText}
-                </button>
+                  {buttonText || 'Button'}
+                </span>
               </div>
             </div>
           </div>

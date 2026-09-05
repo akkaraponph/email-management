@@ -199,231 +199,244 @@ const EmailHeaderFooterComponent: React.FC<EmailHeaderFooterComponentProps> = ({
         onValuesChange={handleFormChange}
         disabled={loading || saving}
       >
-        <Collapse defaultActiveKey={['header', 'footer']} className="mb-4">
-          {/* Header Settings */}
-          <Panel header="Header Settings" key="header">
-            <Form.Item name="headerEnabled" valuePropName="checked">
-              <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" />
-            </Form.Item>
-            
-            <Form.Item
-              noStyle
-              shouldUpdate={(prevValues, currentValues) => prevValues.headerEnabled !== currentValues.headerEnabled}
-            >
-              {({ getFieldValue }) => getFieldValue('headerEnabled') && (
+        <Collapse 
+          defaultActiveKey={['header', 'footer']} 
+          className="mb-4"
+          items={[
+            {
+              key: 'header',
+              label: 'Header Settings',
+              children: (
                 <>
-                  <Form.Item 
-                    label="Header Content" 
-                    name="headerContent"
-                    tooltip="Text or HTML to display in the header. Use variables like {{.companyName}}."
-                  >
-                    <TextArea 
-                      rows={2}
-                      placeholder="Company name or headline"
-                    />
-                  </Form.Item>
-                  
-                  <Form.Item label="Text Color" name="headerTextColor">
-                    <ColorPicker />
-                  </Form.Item>
-                  
-                  <Form.Item label="Logo URL" name="headerLogo">
-                    <Input placeholder="https://example.com/logo.png" />
+                  <Form.Item name="headerEnabled" valuePropName="checked">
+                    <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" />
                   </Form.Item>
                   
                   <Form.Item
                     noStyle
-                    shouldUpdate={(prevValues, currentValues) => 
-                      prevValues.headerLogo !== currentValues.headerLogo
-                    }
+                    shouldUpdate={(prevValues, currentValues) => prevValues.headerEnabled !== currentValues.headerEnabled}
                   >
-                    {({ getFieldValue }) => {
-                      const logoUrl = getFieldValue('headerLogo');
-                      return logoUrl && (
-                        <div className="mb-4">
-                          <div className="mt-2 p-2 bg-gray-50 rounded">
-                            <p className="text-sm text-gray-500 mb-2">Logo Preview:</p>
-                            <img 
-                              src={logoUrl} 
-                              alt="Logo Preview" 
-                              style={{ maxWidth: '100%', maxHeight: '100px' }}
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIGZpbGw9IiNkZGQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZmlsbD0iIzY2NiI+SW1hZ2UgTm90IEZvdW5kPC90ZXh0Pjwvc3ZnPg==';
-                              }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </Form.Item>
-                  
-                  <Form.Item label="Logo Alignment" name="headerLogoAlignment">
-                    <Select>
-                      <Option value="left">Left</Option>
-                      <Option value="center">Center</Option>
-                      <Option value="right">Right</Option>
-                    </Select>
-                  </Form.Item>
-                  
-                  <Form.Item label="Logo Width (px)" name="headerLogoWidth">
-                    <Input type="number" min={50} max={600} />
-                  </Form.Item>
-                </>
-              )}
-            </Form.Item>
-          </Panel>
-          
-          {/* Footer Settings */}
-          <Panel header="Footer Settings" key="footer">
-            <Form.Item name="footerEnabled" valuePropName="checked">
-              <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" />
-            </Form.Item>
-            
-            <Form.Item
-              noStyle
-              shouldUpdate={(prevValues, currentValues) => prevValues.footerEnabled !== currentValues.footerEnabled}
-            >
-              {({ getFieldValue }) => getFieldValue('footerEnabled') && (
-                <>
-                  <Form.Item 
-                    label="Footer Content" 
-                    name="footerContent"
-                    tooltip="Additional custom content for the footer"
-                  >
-                    <TextArea 
-                      rows={2}
-                      placeholder="Optional custom footer content"
-                    />
-                  </Form.Item>
-                  
-                  <Form.Item label="Text Color" name="footerTextColor">
-                    <ColorPicker />
-                  </Form.Item>
-                  
-                  <Form.Item label="Show Social Icons" name="footerShowSocialIcons" valuePropName="checked">
-                    <Switch />
-                  </Form.Item>
-                  
-                  <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, currentValues) => 
-                      prevValues.footerShowSocialIcons !== currentValues.footerShowSocialIcons
-                    }
-                  >
-                    {({ getFieldValue }) => getFieldValue('footerShowSocialIcons') && (
-                      <div className="ml-6 mb-4 p-3 border border-gray-200 rounded">
-                        <Text strong className="block mb-2">Social Links</Text>
-                        
-                        <Form.List name="footerSocialLinks">
-                          {(fields, { add, remove }) => (
-                            <>
-                              {fields.map(field => (
-                                <div key={field.key} className="flex mb-2 items-center">
-                                  <Form.Item
-                                    {...field}
-                                    name={[field.name, 'enabled']}
-                                    valuePropName="checked"
-                                    className="mb-0 mr-2"
-                                  >
-                                    <Switch size="small" />
-                                  </Form.Item>
-                                  
-                                  <Form.Item
-                                    {...field}
-                                    name={[field.name, 'platform']}
-                                    className="mb-0 mr-2 w-24"
-                                  >
-                                    <Select size="small">
-                                      <Option value="facebook">Facebook</Option>
-                                      <Option value="twitter">Twitter</Option>
-                                      <Option value="instagram">Instagram</Option>
-                                      <Option value="linkedin">LinkedIn</Option>
-                                      <Option value="youtube">YouTube</Option>
-                                    </Select>
-                                  </Form.Item>
-                                  
-                                  <Form.Item
-                                    {...field}
-                                    name={[field.name, 'url']}
-                                    className="mb-0 flex-1"
-                                  >
-                                    <Input size="small" placeholder="https://" />
-                                  </Form.Item>
-                                </div>
-                              ))}
-                              
-                              <Form.Item>
-                                <Button 
-                                  type="dashed" 
-                                  onClick={() => add({ platform: 'facebook', url: '', enabled: true })} 
-                                  block
-                                >
-                                  + Add Social Link
-                                </Button>
-                              </Form.Item>
-                            </>
-                          )}
-                        </Form.List>
-                      </div>
-                    )}
-                  </Form.Item>
-                  
-                  <Form.Item label="Show Unsubscribe Link" name="footerShowUnsubscribe" valuePropName="checked">
-                    <Switch />
-                  </Form.Item>
-                  
-                  <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, currentValues) => 
-                      prevValues.footerShowUnsubscribe !== currentValues.footerShowUnsubscribe
-                    }
-                  >
-                    {({ getFieldValue }) => getFieldValue('footerShowUnsubscribe') && (
-                      <div className="ml-6 mb-4 p-3 border border-gray-200 rounded">
-                        <Form.Item label="Unsubscribe Text" name="footerUnsubscribeText">
-                          <Input placeholder="Unsubscribe" />
-                        </Form.Item>
-                        
+                    {({ getFieldValue }) => getFieldValue('headerEnabled') && (
+                      <>
                         <Form.Item 
-                          label="Unsubscribe URL" 
-                          name="footerUnsubscribeUrl"
-                          tooltip="Use the variable {{.unsubscribeUrl}} for personalized links"
+                          label="Header Content" 
+                          name="headerContent"
+                          tooltip="Text or HTML to display in the header. Use variables like {{.companyName}}."
                         >
-                          <Input placeholder="https://example.com/unsubscribe?email={{.email}}" />
+                          <TextArea 
+                            rows={2}
+                            placeholder="Company name or headline"
+                          />
                         </Form.Item>
-                      </div>
+                        
+                        <Form.Item label="Text Color" name="headerTextColor">
+                          <ColorPicker />
+                        </Form.Item>
+                        
+                        <Form.Item label="Logo URL" name="headerLogo">
+                          <Input placeholder="https://example.com/logo.png" />
+                        </Form.Item>
+                        
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, currentValues) => 
+                            prevValues.headerLogo !== currentValues.headerLogo
+                          }
+                        >
+                          {({ getFieldValue }) => {
+                            const logoUrl = getFieldValue('headerLogo');
+                            return logoUrl && (
+                              <div className="mb-4">
+                                <div className="mt-2 p-2 bg-gray-50 rounded">
+                                  <p className="text-sm text-gray-500 mb-2">Logo Preview:</p>
+                                  <img 
+                                    src={logoUrl} 
+                                    alt="Logo Preview" 
+                                    style={{ maxWidth: '100%', maxHeight: '100px' }}
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIGZpbGw9IiNkZGQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZmlsbD0iIzY2NiI+SW1hZ2UgTm90IEZvdW5kPC90ZXh0Pjwvc3ZnPg==';
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          }}
+                        </Form.Item>
+                        
+                        <Form.Item label="Logo Alignment" name="headerLogoAlignment">
+                          <Select>
+                            <Option value="left">Left</Option>
+                            <Option value="center">Center</Option>
+                            <Option value="right">Right</Option>
+                          </Select>
+                        </Form.Item>
+                        
+                        <Form.Item label="Logo Width (px)" name="headerLogoWidth">
+                          <Input type="number" min={50} max={600} />
+                        </Form.Item>
+                      </>
                     )}
                   </Form.Item>
-                  
-                  <Form.Item label="Show Address" name="footerShowAddress" valuePropName="checked">
-                    <Switch />
+                </>
+              ),
+            },
+            {
+              key: 'footer',
+              label: 'Footer Settings',
+              children: (
+                <>
+                  <Form.Item name="footerEnabled" valuePropName="checked">
+                    <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" />
                   </Form.Item>
                   
                   <Form.Item
                     noStyle
-                    shouldUpdate={(prevValues, currentValues) => 
-                      prevValues.footerShowAddress !== currentValues.footerShowAddress
-                    }
+                    shouldUpdate={(prevValues, currentValues) => prevValues.footerEnabled !== currentValues.footerEnabled}
                   >
-                    {({ getFieldValue }) => getFieldValue('footerShowAddress') && (
-                      <Form.Item label="Company Address" name="footerAddress">
-                        <TextArea 
-                          rows={2}
-                          placeholder="Company address and contact information"
-                        />
-                      </Form.Item>
+                    {({ getFieldValue }) => getFieldValue('footerEnabled') && (
+                      <>
+                        <Form.Item 
+                          label="Footer Content" 
+                          name="footerContent"
+                          tooltip="Additional custom content for the footer"
+                        >
+                          <TextArea 
+                            rows={2}
+                            placeholder="Optional custom footer content"
+                          />
+                        </Form.Item>
+                        
+                        <Form.Item label="Text Color" name="footerTextColor">
+                          <ColorPicker />
+                        </Form.Item>
+                        
+                        <Form.Item label="Show Social Icons" name="footerShowSocialIcons" valuePropName="checked">
+                          <Switch />
+                        </Form.Item>
+                        
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, currentValues) => 
+                            prevValues.footerShowSocialIcons !== currentValues.footerShowSocialIcons
+                          }
+                        >
+                          {({ getFieldValue }) => getFieldValue('footerShowSocialIcons') && (
+                            <div className="ml-6 mb-4 p-3 border border-gray-200 rounded">
+                              <Text strong className="block mb-2">Social Links</Text>
+                              
+                              <Form.List name="footerSocialLinks">
+                                {(fields, { add, remove }) => (
+                                  <>
+                                    {fields.map(field => (
+                                      <div key={field.key} className="flex mb-2 items-center">
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, 'enabled']}
+                                          valuePropName="checked"
+                                          className="mb-0 mr-2"
+                                        >
+                                          <Switch size="small" />
+                                        </Form.Item>
+                                        
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, 'platform']}
+                                          className="mb-0 mr-2 w-24"
+                                        >
+                                          <Select size="small">
+                                            <Option value="facebook">Facebook</Option>
+                                            <Option value="twitter">Twitter</Option>
+                                            <Option value="instagram">Instagram</Option>
+                                            <Option value="linkedin">LinkedIn</Option>
+                                            <Option value="youtube">YouTube</Option>
+                                          </Select>
+                                        </Form.Item>
+                                        
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, 'url']}
+                                          className="mb-0 flex-1"
+                                        >
+                                          <Input size="small" placeholder="https://" />
+                                        </Form.Item>
+                                      </div>
+                                    ))}
+                                    
+                                    <Form.Item>
+                                      <Button 
+                                        type="dashed" 
+                                        onClick={() => add({ platform: 'facebook', url: '', enabled: true })} 
+                                        block
+                                      >
+                                        + Add Social Link
+                                      </Button>
+                                    </Form.Item>
+                                  </>
+                                )}
+                              </Form.List>
+                            </div>
+                          )}
+                        </Form.Item>
+                        
+                        <Form.Item label="Show Unsubscribe Link" name="footerShowUnsubscribe" valuePropName="checked">
+                          <Switch />
+                        </Form.Item>
+                        
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, currentValues) => 
+                            prevValues.footerShowUnsubscribe !== currentValues.footerShowUnsubscribe
+                          }
+                        >
+                          {({ getFieldValue }) => getFieldValue('footerShowUnsubscribe') && (
+                            <div className="ml-6 mb-4 p-3 border border-gray-200 rounded">
+                              <Form.Item label="Unsubscribe Text" name="footerUnsubscribeText">
+                                <Input placeholder="Unsubscribe" />
+                              </Form.Item>
+                              
+                              <Form.Item 
+                                label="Unsubscribe URL" 
+                                name="footerUnsubscribeUrl"
+                                tooltip="Use the variable {{.unsubscribeUrl}} for personalized links"
+                              >
+                                <Input placeholder="https://example.com/unsubscribe?email={{.email}}" />
+                              </Form.Item>
+                            </div>
+                          )}
+                        </Form.Item>
+                        
+                        <Form.Item label="Show Address" name="footerShowAddress" valuePropName="checked">
+                          <Switch />
+                        </Form.Item>
+                        
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, currentValues) => 
+                            prevValues.footerShowAddress !== currentValues.footerShowAddress
+                          }
+                        >
+                          {({ getFieldValue }) => getFieldValue('footerShowAddress') && (
+                            <Form.Item label="Company Address" name="footerAddress">
+                              <TextArea 
+                                rows={2}
+                                placeholder="Company address and contact information"
+                              />
+                            </Form.Item>
+                          )}
+                        </Form.Item>
+                        
+                        <Form.Item label="Copyright Text" name="footerCopyrightText">
+                          <Input placeholder={`© ${new Date().getFullYear()} Company Name. All Rights Reserved.`} />
+                        </Form.Item>
+                      </>
                     )}
                   </Form.Item>
-                  
-                  <Form.Item label="Copyright Text" name="footerCopyrightText">
-                    <Input placeholder={`© ${new Date().getFullYear()} Company Name. All Rights Reserved.`} />
-                  </Form.Item>
                 </>
-              )}
-            </Form.Item>
-          </Panel>
-        </Collapse>
+              ),
+            },
+          ]}
+        />
         
         <div className="mt-4 p-4 bg-gray-50 rounded">
           <Title level={5}>Preview</Title>

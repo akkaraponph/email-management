@@ -515,76 +515,87 @@ const updatePreview = async () => {
             {templateId && <span className="text-green-600 ml-2">Your changes will be saved to the database.</span>}
           </Text>
           
-          <Collapse defaultActiveKey={['general', 'sections']} className="mb-4">
-            <Panel header="General Settings" key="general">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm mb-2">Email Body Background</label>
-                  <div className="flex items-center">
-                    <ColorPicker
-                      value={settings.bodyBgColor}
-                      onChange={(color) => setSettings({...settings, bodyBgColor: color.toHexString()})}
-                      showText
-                    />
-                    <Text className="ml-2">Outside container</Text>
+          <Collapse 
+            defaultActiveKey={['general', 'sections']} 
+            className="mb-4"
+            items={[
+              {
+                key: 'general',
+                label: 'General Settings',
+                children: (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm mb-2">Email Body Background</label>
+                      <div className="flex items-center">
+                        <ColorPicker
+                          value={settings.bodyBgColor}
+                          onChange={(color) => setSettings({...settings, bodyBgColor: color.toHexString()})}
+                          showText
+                        />
+                        <Text className="ml-2">Outside container</Text>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm mb-2">Container Background</label>
+                      <div className="flex items-center">
+                        <ColorPicker
+                          value={settings.containerBgColor}
+                          onChange={(color) => setSettings({...settings, containerBgColor: color.toHexString()})}
+                          showText
+                        />
+                        <Text className="ml-2">Main container</Text>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm mb-2">Container Width</label>
+                      <Input
+                        value={settings.maxWidth}
+                        onChange={(e) => setSettings({...settings, maxWidth: e.target.value})}
+                        placeholder="e.g. 650px"
+                        className="w-32"
+                      />
+                    </div>
                   </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm mb-2">Container Background</label>
-                  <div className="flex items-center">
-                    <ColorPicker
-                      value={settings.containerBgColor}
-                      onChange={(color) => setSettings({...settings, containerBgColor: color.toHexString()})}
-                      showText
-                    />
-                    <Text className="ml-2">Main container</Text>
+                ),
+              },
+              {
+                key: 'sections',
+                label: 'Section Colors',
+                children: (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm mb-2">Header Background</label>
+                      <ColorPicker
+                        value={settings.headerBgColor}
+                        onChange={(color) => setSettings({...settings, headerBgColor: color.toHexString()})}
+                        showText
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm mb-2">Content Background</label>
+                      <ColorPicker
+                        value={settings.contentBgColor}
+                        onChange={(color) => setSettings({...settings, contentBgColor: color.toHexString()})}
+                        showText
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm mb-2">Footer Background</label>
+                      <ColorPicker
+                        value={settings.footerBgColor}
+                        onChange={(color) => setSettings({...settings, footerBgColor: color.toHexString()})}
+                        showText
+                      />
+                    </div>
                   </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm mb-2">Container Width</label>
-                  <Input
-                    value={settings.maxWidth}
-                    onChange={(e) => setSettings({...settings, maxWidth: e.target.value})}
-                    placeholder="e.g. 650px"
-                    className="w-32"
-                  />
-                </div>
-              </div>
-            </Panel>
-            
-            <Panel header="Section Colors" key="sections">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm mb-2">Header Background</label>
-                  <ColorPicker
-                    value={settings.headerBgColor}
-                    onChange={(color) => setSettings({...settings, headerBgColor: color.toHexString()})}
-                    showText
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm mb-2">Content Background</label>
-                  <ColorPicker
-                    value={settings.contentBgColor}
-                    onChange={(color) => setSettings({...settings, contentBgColor: color.toHexString()})}
-                    showText
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm mb-2">Footer Background</label>
-                  <ColorPicker
-                    value={settings.footerBgColor}
-                    onChange={(color) => setSettings({...settings, footerBgColor: color.toHexString()})}
-                    showText
-                  />
-                </div>
-              </div>
-            </Panel>
-          </Collapse>
+                ),
+              },
+            ]}
+          />
         </>
       ),
     },

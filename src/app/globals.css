@@ -1,9 +1,11 @@
 @import "tailwindcss";
-@import 'antd/dist/antd.css';
 
 :root {
-  --background: #f6f7fb;
-  --foreground: #172033;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --border: #e2e8f0;
 }
 
 @theme inline {
@@ -16,62 +18,171 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Studio Layout */
 .email-workspace {
   min-height: 100vh;
+  background-color: #f8fafc;
 }
 
-.email-app-shell {
-  background:
-    radial-gradient(circle at 3% 0%, rgba(99, 102, 241, 0.13), transparent 26rem),
-    linear-gradient(180deg, #fbfcff 0%, #f5f6fa 42%, #f8fafc 100%);
+.studio-topbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
-.email-app-content {
-  max-width: 1440px;
+/* Ant Design Header override to prevent overflow and text cutoff */
+header.ant-layout-header.studio-topbar,
+.ant-layout-header.studio-topbar {
+  height: auto !important;
+  line-height: normal !important;
+  padding: 0.75rem 1.5rem !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: inherit !important;
 }
 
-.workspace-header {
-  background: rgba(255, 255, 255, 0.88) !important;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
-  backdrop-filter: blur(14px);
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.workspace-header .ant-layout-header {
-  height: auto;
-  line-height: normal;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.workspace-title {
-  letter-spacing: -0.025em;
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
-.workspace-card {
-  border: 1px solid #e7eaf0 !important;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-.workspace-card .ant-card-body {
-  padding: 24px;
+/* Variable Token in Editor & UI */
+.variable-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
 }
 
-.template-summary {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+.variable-pill:hover {
+  background-color: #e0e7ff;
+  border-color: #a5b4fc;
 }
 
-.variable-tag {
-  border: 0 !important;
-  border-radius: 999px !important;
+/* TipTap Editor ProseMirror Custom Styling */
+.ProseMirror {
+  outline: none;
+  min-height: 420px;
+  color: #1e293b;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.ProseMirror p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3 {
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+}
+
+.ProseMirror h1 { font-size: 1.75rem; }
+.ProseMirror h2 { font-size: 1.35rem; }
+.ProseMirror h3 { font-size: 1.15rem; }
+
+.ProseMirror table {
+  border-collapse: collapse;
+  margin: 1rem 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.ProseMirror td, .ProseMirror th {
+  min-width: 1em;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror th {
+  font-weight: 600;
+  text-align: left;
+  background-color: #f8fafc;
+}
+
+.ProseMirror .variable {
+  display: inline-block;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #4338ca;
+  border-radius: 4px;
+  padding: 1px 6px;
   font-family: var(--font-geist-mono), monospace;
   font-size: 12px;
-  padding: 3px 9px;
+  font-weight: 600;
+  vertical-align: middle;
 }
 
-@media (max-width: 640px) {
-  .workspace-card .ant-card-body {
-    padding: 18px;
-  }
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #94a3b8;
+  pointer-events: none;
+  height: 0;
+}
+
+/* Email Canvas Surface */
+.email-canvas-viewport {
+  background: radial-gradient(#e2e8f0 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-color: #f1f5f9;
+}
+
+.email-paper {
+  background: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Responsive Device Frames */
+.device-desktop {
+  width: 650px;
+  max-width: 100%;
+}
+
+.device-tablet {
+  width: 480px;
+  max-width: 100%;
+}
+
+.device-mobile {
+  width: 375px;
+  max-width: 100%;
 }

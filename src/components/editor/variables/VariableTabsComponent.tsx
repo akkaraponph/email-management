@@ -110,92 +110,109 @@ const VariableTabs: React.FC<VariableTabsProps> = ({
     {
       key: 'variables',
       label: (
-        <span>
-          <Badge color="blue" />
-          Variables
+        <span className="font-medium">
+          Variables ({availableVariables.length})
         </span>
       ),
       children: (
-        <div className="flex flex-col gap-2 max-h-[400px] overflow-auto">
-          {availableVariables.map((variable) => (
-            <div key={variable} className="flex justify-between items-center">
-              <Button
-                onClick={() => insertVariable(variable)}
-                disabled={previewMode}
-                className="text-left flex-grow bg-gray-50 hover:bg-gray-100"
-              >
-                <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
-                  {`{{.${variable}}}`}
-                </span>
-              </Button>
-              
-              {!previewMode && (
-                <Space className="ml-2">
-                  {onEditVariable && (
-                    <Tooltip title="Edit variable">
-                      <Button 
-                        icon={<EditOutlined />} 
-                        size="small"
-                        onClick={() => onEditVariable(variable)}
-                      />
-                    </Tooltip>
-                  )}
-                  
-                  {onDeleteVariable && (
-                    <Tooltip title="Remove variable">
-                      <Button 
-                        icon={deleteLoading[variable] ? <LoadingOutlined /> : <DeleteOutlined />} 
-                        size="small" 
-                        danger
-                        loading={deleteLoading[variable]}
-                        onClick={() => handleDeleteVariable(variable)}
-                      />
-                    </Tooltip>
-                  )}
-                </Space>
-              )}
+        <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto pr-1">
+          {availableVariables.length === 0 ? (
+            <div className="text-center py-6 text-slate-400 text-xs">
+              No variables added yet.
             </div>
-          ))}
+          ) : (
+            availableVariables.map((variable) => (
+              <div 
+                key={variable} 
+                className="group flex items-center justify-between p-2 rounded-lg border border-slate-100 hover:border-indigo-200 bg-slate-50/70 hover:bg-indigo-50/40 transition-all duration-150"
+              >
+                <Tooltip title={previewMode ? "Disabled in preview mode" : "Click to insert into cursor position"}>
+                  <button
+                    type="button"
+                    onClick={() => !previewMode && insertVariable(variable)}
+                    disabled={previewMode}
+                    className="text-left font-mono text-xs text-indigo-700 hover:text-indigo-900 font-medium cursor-pointer disabled:cursor-not-allowed flex-1 truncate"
+                  >
+                    {`{{.${variable}}}`}
+                  </button>
+                </Tooltip>
+                
+                {!previewMode && (
+                  <Space size={4} className="opacity-70 group-hover:opacity-100 transition-opacity">
+                    {onEditVariable && (
+                      <Tooltip title="Rename variable">
+                        <Button 
+                          type="text"
+                          icon={<EditOutlined className="text-slate-500 hover:text-indigo-600" />} 
+                          size="small"
+                          onClick={() => onEditVariable(variable)}
+                        />
+                      </Tooltip>
+                    )}
+                    
+                    {onDeleteVariable && (
+                      <Tooltip title="Delete variable">
+                        <Button 
+                          type="text"
+                          danger
+                          icon={deleteLoading[variable] ? <LoadingOutlined /> : <DeleteOutlined className="text-rose-400 hover:text-rose-600" />} 
+                          size="small" 
+                          loading={deleteLoading[variable]}
+                          onClick={() => handleDeleteVariable(variable)}
+                        />
+                      </Tooltip>
+                    )}
+                  </Space>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      )
+    },
+    {
+      key: 'test-data',
+      label: (
+        <span className="font-medium">
+          Mock Data {saving && <span className="text-xs text-indigo-500 animate-pulse">(saving)</span>}
+        </span>
+      ),
+      children: (
+        <div className="flex flex-col gap-3 max-h-[360px] overflow-y-auto pr-1">
+          {availableVariables.length === 0 ? (
+            <div className="text-center py-6 text-slate-400 text-xs">
+              Add variables first to configure mock values.
+            </div>
+          ) : (
+            availableVariables.map((key) => (
+              <div key={key} className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                <div className="flex items-center justify-between mb-1.5">
+                  <Text className="text-xs font-mono font-medium text-slate-700">{key}</Text>
+                  <span className="text-[10px] text-slate-400 font-mono">{'{{.' + key + '}}'}</span>
+                </div>
+                <Input
+                  value={localPreviewData[key] || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                    handleUpdatePreviewData(key, e.target.value)
+                  }
+                  placeholder={`Value for ${key}`}
+                  size="small"
+                  className="bg-white"
+                />
+              </div>
+            ))
+          )}
         </div>
       )
     }
   ];
-  
-  // Conditionally add test data tab
-  if (previewMode) {
-    tabItems.push({
-      key: 'test-data',
-      label: (
-        <span>
-          <Badge color="green" />
-          Test Data {saving && '(Saving...)'}
-        </span>
-      ),
-      children: (
-        <div className="flex flex-col gap-3 max-h-[400px] overflow-auto">
-          {availableVariables.map((key) => (
-            <div key={key}>
-              <Text className="text-xs text-gray-500">{key}</Text>
-              <Input
-                value={localPreviewData[key] || ''}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                  handleUpdatePreviewData(key, e.target.value)
-                }
-                className="w-full"
-                size="small"
-              />
-            </div>
-          ))}
-        </div>
-      )
-    });
-  }
   
   return (
     <Tabs 
       activeKey={activeTab}
       onChange={setActiveTab}
       items={tabItems}
+      size="small"
     />
   );
 };

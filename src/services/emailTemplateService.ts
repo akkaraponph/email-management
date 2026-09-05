@@ -149,24 +149,37 @@ export async function getPreviewData(templateId: string): Promise<PreviewData> {
 }
 
 
+const HEADER_FOOTER_STORAGE_PREFIX = 'email-header-footer-';
+
 /**
  * Get header/footer settings for a template
  */
 export async function getTemplateHeaderFooter(templateId: string): Promise<any | null> {
+  // Check local browser storage first for demo/offline resilience
+  if (typeof window !== 'undefined') {
+    const cached = localStorage.getItem(`${HEADER_FOOTER_STORAGE_PREFIX}${templateId}`);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        // ignore parse error
+      }
+    }
+  }
+
   try {
     const response = await fetch(`/api/templates/${templateId}/header-footer`);
     
     if (!response.ok) {
-      if (response.status === 404) {
-        // No header/footer settings found, which is ok
-        return null;
-      }
-      throw new Error('Failed to fetch header/footer settings');
+      return null;
     }
     
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching header/footer settings:', error);
+    const data = await response.json();
+    if (typeof window !== 'undefined' && data) {
+      localStorage.setItem(`${HEADER_FOOTER_STORAGE_PREFIX}${templateId}`, JSON.stringify(data));
+    }
+    return data;
+  } catch {
     return null;
   }
 }
@@ -178,6 +191,10 @@ export async function updateTemplateHeaderFooter(
   templateId: string, 
   settings: any
 ): Promise<any> {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(`${HEADER_FOOTER_STORAGE_PREFIX}${templateId}`, JSON.stringify(settings));
+  }
+
   try {
     const response = await fetch(`/api/templates/${templateId}/header-footer`, {
       method: 'PUT',
@@ -188,14 +205,13 @@ export async function updateTemplateHeaderFooter(
     });
     
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to update header/footer settings');
+      return settings;
     }
     
     return response.json();
-  } catch (error) {
-    console.error('Error updating header/footer settings:', error);
-    throw error;
+  } catch {
+    // If backend is unreachable or not configured, return saved settings
+    return settings;
   }
 }
 

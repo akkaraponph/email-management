@@ -32,7 +32,8 @@ import {
   Popconfirm,
   Modal,
   message,
-  Spin
+  Spin,
+  Tooltip
 } from 'antd'
 import { 
   PlusOutlined, 
@@ -40,7 +41,8 @@ import {
   SaveOutlined,
   DeleteOutlined,
   InfoCircleOutlined,
-  LoadingOutlined
+  LoadingOutlined,
+  MailOutlined
 } from '@ant-design/icons'
 import { Header } from 'antd/es/layout/layout'
 import ExportOptionsComponent from '@/components/editor/sections/export/ExportOptionsComponent';
@@ -66,6 +68,9 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplateWithRelations | null>(null)
   const [templateList, setTemplateList] = useState<EmailTemplateWithRelations[]>([])
   const [newTemplateName, setNewTemplateName] = useState<string>('')
+  const [newTemplateDesc, setNewTemplateDesc] = useState<string>('')
+  const [newTemplateModalOpen, setNewTemplateModalOpen] = useState<boolean>(false)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false)
   const [currentHtml, setCurrentHtml] = useState<string>('')
   const [previewData, setPreviewData] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState<boolean>(true)
@@ -91,6 +96,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
         setSelectedTemplate(firstTemplate);
         setCurrentHtml(firstTemplate.defaultContent);
         setPreviewData(getPreviewDataObject(firstTemplate));
+        setHasUnsavedChanges(false);
         
         if (onSelectTemplate) {
           onSelectTemplate(firstTemplate, firstTemplate.defaultContent);
@@ -108,6 +114,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
   // Handle HTML changes
   const handleHtmlChange = (html: string) => {
     setCurrentHtml(html);
+    setHasUnsavedChanges(true);
     
     if (selectedTemplate && onSelectTemplate) {
       onSelectTemplate(selectedTemplate, html);
@@ -129,6 +136,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
       // Update the preview data if it has changed
       await updatePreviewData(selectedTemplate.id, previewData);
       
+      setHasUnsavedChanges(false);
       message.success('Template saved successfully');
       setSaveLoading(false);
     } catch (error) {
@@ -140,15 +148,15 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
   
   // Create a new template
   const createNewTemplate = async () => {
-    if (!newTemplateName) return;
+    if (!newTemplateName.trim()) return;
     
     try {
       setCreateLoading(true);
       
       const newTemplate = await createTemplate({
-        name: newTemplateName,
-        description: '',
-        defaultContent: '<p>Start creating your template here...</p>',
+        name: newTemplateName.trim(),
+        description: newTemplateDesc.trim(),
+        defaultContent: '<h2>Welcome to our service</h2><p>Hi {{.firstName}},</p><p>We are thrilled to welcome you! Explore your new account today.</p>',
         variables: [
           { 
             key: 'firstName', 
@@ -170,9 +178,9 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
           }
         ],
         previewData: {
-          firstName: 'John',
-          lastName: 'Doe',
-          email: 'john.doe@example.com'
+          firstName: 'Alex',
+          lastName: 'Morgan',
+          email: 'alex.morgan@example.com'
         }
       });
       
@@ -182,6 +190,9 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
       setCurrentHtml(newTemplate.defaultContent);
       setPreviewData(getPreviewDataObject(newTemplate));
       setNewTemplateName('');
+      setNewTemplateDesc('');
+      setNewTemplateModalOpen(false);
+      setHasUnsavedChanges(false);
       
       // Force re-render of editor
       setForceEditorKey(`editor-${Date.now()}`);
@@ -190,7 +201,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
         onSelectTemplate(newTemplate, newTemplate.defaultContent);
       }
       
-      message.success(`Template "${newTemplateName}" created successfully`);
+      message.success(`Template "${newTemplate.name}" created successfully`);
       setCreateLoading(false);
     } catch (error) {
       console.error('Error creating template:', error);
@@ -396,169 +407,217 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
   }
   
   return (
-    <Layout className="email-app-shell min-h-screen">
-      <Content className="email-app-content mx-auto w-full p-4 md:p-8">
-        <Header className="workspace-header mb-6 h-auto rounded-2xl px-5 py-5 md:px-7">
-          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
-            <div>
-              <Text className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">Email workspace</Text>
-              <Title level={2} className="workspace-title !mb-1 !text-slate-900">Template studio</Title>
-              <Text type="secondary">Create, refine, and export polished email campaigns.</Text>
+    <div className="email-app-shell min-h-screen flex flex-col bg-slate-50/70">
+      {/* Studio Top Navigation Bar */}
+      <header className="studio-topbar px-4 sm:px-6 py-3 border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-40">
+        <div className="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
+          {/* Brand & Template Selector */}
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 flex items-center justify-center text-white shadow-xs">
+              <MailOutlined className="text-lg" />
             </div>
-            <Space wrap size="middle">
-              {selectedTemplate && (
-                <>
-                  <Button 
-                    key="save" 
-                    type="primary" 
-                    icon={<SaveOutlined />}
-                    onClick={saveCurrentTemplate}
-                    loading={saveLoading}
-                  >
-                    Save
-                  </Button>
-                  <Button 
-                    key="preview" 
-                    type="default" 
-                    icon={<EyeOutlined />} 
-                    onClick={previewCurrentTemplate}
-                  >
-                    Full Page Preview
-                  </Button>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-900 text-sm tracking-tight">Email Studio</span>
+                <span className="text-slate-300 font-light">/</span>
+                <Select
+                  value={selectedTemplate?.id}
+                  onChange={handleTemplateChange}
+                  className="min-w-[180px]"
+                  size="small"
+                  popupMatchSelectWidth={false}
+                  popupRender={(menu) => (
+                    <div>
+                      {menu}
+                      <Divider className="my-1" />
+                      <div className="p-1">
+                        <Button 
+                          type="text" 
+                          icon={<PlusOutlined />} 
+                          block 
+                          size="small" 
+                          className="text-left text-indigo-600 font-medium hover:bg-indigo-50"
+                          onClick={() => setNewTemplateModalOpen(true)}
+                        >
+                          New Template...
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                >
+                  {templateList.map(template => (
+                    <Option key={template.id} value={template.id}>
+                      <Space>
+                        <span className="font-medium">{template.name}</span>
+                        {template.isSystem && <Tag color="blue" className="text-[10px] rounded-full px-1.5 py-0 m-0">System</Tag>}
+                      </Space>
+                    </Option>
+                  ))}
+                </Select>
+                
+                {selectedTemplate?.isSystem ? (
+                  <Tag color="blue" className="text-xs rounded-full px-2 py-0.5 m-0 font-medium">System Template</Tag>
+                ) : (
+                  <Tag color="default" className="text-xs rounded-full px-2 py-0.5 m-0 font-medium text-slate-600">Custom Template</Tag>
+                )}
+              </div>
+              
+              {/* Save Status & Description */}
+              <div className="flex items-center gap-2 mt-0.5">
+                {hasUnsavedChanges ? (
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-amber-600">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                    Unsaved edits
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-600">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    All changes saved
+                  </span>
+                )}
+                {selectedTemplate?.description && (
+                  <>
+                    <span className="text-slate-300">•</span>
+                    <span className="text-[11px] text-slate-400 truncate max-w-xs">{selectedTemplate.description}</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
 
-                  {selectedTemplate && (
-            <ExportOptionsComponent
-              html={selectedTemplate.defaultContent}
-              rawTemplateHtml={selectedTemplate.defaultContent}
-              previewData={previewData}
-              templateId={selectedTemplate.id}
-              templateName={selectedTemplate.name}
-            />
-          )}
+          {/* Action Group */}
+          <div className="flex items-center gap-2 ml-auto">
+            <Button
+              type="default"
+              icon={<PlusOutlined />}
+              onClick={() => setNewTemplateModalOpen(true)}
+            >
+              New Template
+            </Button>
 
+            {selectedTemplate && (
+              <>
+                <Button 
+                  type="default" 
+                  icon={<EyeOutlined />} 
+                  onClick={previewCurrentTemplate}
+                >
+                  Full Preview
+                </Button>
 
-                  {canDeleteTemplate && (
+                <ExportOptionsComponent
+                  html={selectedTemplate.defaultContent}
+                  rawTemplateHtml={selectedTemplate.defaultContent}
+                  previewData={previewData}
+                  templateId={selectedTemplate.id}
+                  templateName={selectedTemplate.name}
+                />
+
+                <Button 
+                  type="primary" 
+                  icon={<SaveOutlined />}
+                  onClick={saveCurrentTemplate}
+                  loading={saveLoading}
+                  className="shadow-xs font-medium"
+                >
+                  Save
+                </Button>
+
+                {canDeleteTemplate && (
+                  <Tooltip title="Delete this template">
                     <Button 
-                      key="delete" 
-                      type="default" 
+                      type="text" 
                       danger
                       icon={<DeleteOutlined />}
                       onClick={() => setDeleteConfirmVisible(true)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                </>
-              )}
-            </Space>
-          </div>
-        </Header>
-        
-        <Card className="workspace-card mb-6" bordered={false}>
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-            <div className="w-full md:w-auto">
-              <Text strong className="mb-2 block text-slate-700">Current template</Text>
-              <Select 
-                className="w-full min-w-[200px]"
-                value={selectedTemplate?.id}
-                onChange={handleTemplateChange}
-                optionLabelProp="label"
-                loading={loading}
-              >
-                {templateList.map(template => (
-                  <Option key={template.id} value={template.id} label={template.name}>
-                    <Space>
-                      <span>{template.name}</span>
-                      {template.isSystem && <Tag color="blue">System</Tag>}
-                    </Space>
-                  </Option>
-                ))}
-              </Select>
-            </div>
-            
-            <Divider type="vertical" className="hidden md:block h-10" />
-            
-            <div className="flex-grow">
-              <Text strong className="mb-2 block text-slate-700">Start a new template</Text>
-              <Space.Compact className="w-full">
-                <Input
-                  placeholder="New template name"
-                  value={newTemplateName}
-                  onChange={(e) => setNewTemplateName(e.target.value)}
-                />
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={createNewTemplate}
-                  disabled={!newTemplateName || createLoading}
-                  loading={createLoading}
-                >
-                  Create
-                </Button>
-              </Space.Compact>
-            </div>
-          </div>
-        </Card>
-        
-        {selectedTemplate ? (
-          <Card className="workspace-card template-summary mb-6" bordered={false}>
-            <div className="mb-6 flex flex-col gap-2 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <Text className="mb-1 block text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">Editing template</Text>
-                <Title level={3} className="workspace-title !mb-1 !text-slate-900">{selectedTemplate.name}</Title>
-              </div>
-              {selectedTemplate.isSystem && <Tag color="blue" className="self-start rounded-full px-3 py-1">System template</Tag>}
-            </div>
-            {selectedTemplate.description && (
-              <Paragraph type="secondary">{selectedTemplate.description}</Paragraph>
+                    />
+                  </Tooltip>
+                )}
+              </>
             )}
-            
-            {/* Variables Section */}
-            <div className="mb-4">
-              <Text strong className="text-slate-700">Available variables</Text>
-              <Text type="secondary" className="ml-2 text-xs">Insert these placeholders anywhere in your message.</Text>
-              <div className="mt-3">
-                {selectedTemplate.variables.map(v => (
-                  <Tag 
-                    key={v.id} 
-                    color="blue" 
-                    className="variable-tag mr-2 mb-2"
-                  >
-                    {`{{.${v.key}}}`}
-                  </Tag>
-                ))}
-              </div>
-            </div>
-            
-            {/* Add Variable Component */}
-            {/* <AddVariableComponent 
-              existingVariables={getVariableKeys()}
-              onAddVariable={handleAddVariable}
-              templateId={selectedTemplate.id}
-            /> */}
-            
-            <Divider />
-            
-            {/* Email Template Editor with key to force re-render */}
-            <EmailTemplateEditor 
-              key={forceEditorKey}
-              initialContent={currentHtml}
-              templateId={selectedTemplate.id}
-              availableVariables={getVariableKeys()}
-              onHtmlChange={handleHtmlChange}
-              previewData={previewData}
-            />
-          </Card>
-        ) : (
-          <Alert
-            message="No template selected"
-            description="Please select a template from the dropdown or create a new one."
-            type="info"
-            showIcon
+          </div>
+        </div>
+      </header>
+
+      {/* Main Workspace Body */}
+      <main className="max-w-[1600px] w-full mx-auto p-4 sm:p-6 flex-1 flex flex-col">
+        {selectedTemplate ? (
+          <EmailTemplateEditor 
+            key={forceEditorKey}
+            initialContent={currentHtml}
+            templateId={selectedTemplate.id}
+            availableVariables={getVariableKeys()}
+            onHtmlChange={handleHtmlChange}
+            previewData={previewData}
           />
+        ) : (
+          <div className="flex-1 flex items-center justify-center p-12">
+            <Card className="max-w-md text-center shadow-sm border-slate-200">
+              <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3">
+                <MailOutlined className="text-xl" />
+              </div>
+              <Title level={4} className="!mb-1">No Template Selected</Title>
+              <Text type="secondary" className="block mb-4">
+                Choose an existing template or create a new campaign to get started.
+              </Text>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => setNewTemplateModalOpen(true)}>
+                Create Template
+              </Button>
+            </Card>
+          </div>
         )}
-      </Content>
-      
+      </main>
+
+      {/* Create New Template Modal */}
+      <Modal
+        title={
+          <div>
+            <div className="text-base font-semibold text-slate-900">Create New Template</div>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">Start building a responsive email template with pre-configured variables</p>
+          </div>
+        }
+        open={newTemplateModalOpen}
+        onCancel={() => setNewTemplateModalOpen(false)}
+        onOk={createNewTemplate}
+        okText="Create Template"
+        confirmLoading={createLoading}
+        okButtonProps={{ disabled: !newTemplateName.trim() }}
+        centered
+        width={480}
+      >
+        <div className="space-y-4 my-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Template Name *</label>
+            <Input
+              placeholder="e.g. Weekly Product Digest, Order Confirmation"
+              value={newTemplateName}
+              onChange={(e) => setNewTemplateName(e.target.value)}
+              autoFocus
+              onPressEnter={createNewTemplate}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Description (Optional)</label>
+            <Input.TextArea
+              placeholder="Brief summary of this email campaign"
+              rows={2}
+              value={newTemplateDesc}
+              onChange={(e) => setNewTemplateDesc(e.target.value)}
+            />
+          </div>
+
+          <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-xs text-slate-600">
+            <p className="font-semibold text-slate-700 mb-1">Included Starter Variables:</p>
+            <div className="flex gap-2">
+              <span className="variable-pill">{'{{.firstName}}'}</span>
+              <span className="variable-pill">{'{{.lastName}}'}</span>
+              <span className="variable-pill">{'{{.email}}'}</span>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
       {/* Delete Confirmation Modal */}
       <Modal
         title="Delete Template"
@@ -577,11 +636,13 @@ const handleUpdateVariable = async (variableId: string, updates: Partial<Templat
             Delete
           </Button>
         ]}
+        centered
+        width={440}
       >
-        <p>Are you sure you want to delete the template "{selectedTemplate?.name}"?</p>
-        <p>This action cannot be undone.</p>
+        <p className="text-sm text-slate-700">Are you sure you want to delete the template <strong>"{selectedTemplate?.name}"</strong>?</p>
+        <p className="text-xs text-rose-600 mt-1 font-medium">This action cannot be undone.</p>
       </Modal>
-    </Layout>
+    </div>
   )
 }
 

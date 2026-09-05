@@ -1,22 +1,7 @@
-// import EditorPage from "@/components/pages/email-editor/EditorPage";
-// import { ConfigProvider } from "antd";
-// // Removed the import as CompatibleApp is not exported from '@ant-design/compatible'
-
-// export default function App() {
-//   return (
-//     <ConfigProvider>
-//         <main>
-//           {/* No event handlers passed here */}
-//           <EditorPage />
-//         </main>
-//     </ConfigProvider>
-//   )
-// }
-
 "use client"
 import { useState } from 'react'
 import EmailTemplateManager from '@/components/editor/EmailTemplateManager'
-import { ConfigProvider } from "antd"
+import { ConfigProvider, App } from "antd"
 import { EmailTemplateWithRelations } from '@/services/emailTemplateService'
 
 export default function EditorPage() {
@@ -34,19 +19,63 @@ export default function EditorPage() {
         token: {
           colorPrimary: '#4f46e5',
           colorInfo: '#4f46e5',
-          colorText: '#172033',
+          colorSuccess: '#10b981',
+          colorWarning: '#f59e0b',
+          colorError: '#ef4444',
+          colorText: '#0f172a',
           colorTextSecondary: '#64748b',
           colorBorder: '#e2e8f0',
-          borderRadius: 12,
-          fontFamily: 'var(--font-geist-sans), Arial, sans-serif',
+          colorBorderSecondary: '#f1f5f9',
+          colorBgContainer: '#ffffff',
+          colorBgLayout: '#f8fafc',
+          borderRadius: 8,
+          borderRadiusLG: 12,
+          borderRadiusSM: 6,
+          fontFamily: 'var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          fontSize: 14,
         },
+        components: {
+          Button: {
+            controlHeight: 38,
+            controlHeightSM: 30,
+            controlHeightLG: 44,
+            borderRadius: 8,
+            fontWeight: 500,
+            paddingInline: 14,
+          },
+          Card: {
+            borderRadiusLG: 12,
+            headerHeight: 48,
+          },
+          Tabs: {
+            titleFontSize: 14,
+            horizontalItemPadding: '10px 16px',
+            inkBarColor: '#4f46e5',
+            itemSelectedColor: '#4f46e5',
+            itemHoverColor: '#6366f1',
+          },
+          Input: {
+            controlHeight: 38,
+            borderRadius: 8,
+          },
+          Select: {
+            controlHeight: 38,
+            borderRadius: 8,
+          },
+          Modal: {
+            borderRadiusLG: 16,
+          },
+        }
       }}
     >
-      <main className="email-workspace">
-        <EmailTemplateManager 
-          onSelectTemplate={handleSelectTemplate}
-        />
-      </main>
+      <App>
+        <main className="email-workspace text-slate-900">
+          <EmailTemplateManager 
+            onSelectTemplate={handleSelectTemplate}
+          />
+        </main>
+      </App>
     </ConfigProvider>
   )
 }
+

@@ -288,75 +288,94 @@ export default function EmailPreviewPage() {
       label: <span><InfoCircleOutlined /> Template Info</span>,
       children: (
         <div className="template-info">
-          <Collapse defaultActiveKey={['basic']} bordered={false} className="bg-transparent">
-            <Panel header="Basic Information" key="basic" className="site-collapse-custom-panel">
-              <div className="mb-3">
-                <Text type="secondary" className="block text-xs">Template ID</Text>
-                <Text strong className="word-break-all">{templateId}</Text>
-              </div>
-              <div className="mb-3">
-                <Text type="secondary" className="block text-xs">Template Name</Text>
-                <Text>{templateName}</Text>
-              </div>
-              <div>
-                <Text type="secondary" className="block text-xs">Variables</Text>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {availableVariables.map(variable => (
-                    <Tag key={variable} color="blue">
-                      {`{{${variable}}}`}
-                    </Tag>
-                  ))}
-                </div>
-              </div>
-            </Panel>
-            <Panel header="Preview Settings" key="preview" className="site-collapse-custom-panel">
-              <div className="mb-3">
-                <Text type="secondary" className="block mb-1">Device Preview</Text>
-                <Radio.Group 
-                  value={viewMode} 
-                  onChange={(e) => setViewMode(e.target.value)}
-                  optionType="button"
-                  buttonStyle="solid"
-                  size="small"
-                  className="w-full"
-                >
-                  <Radio.Button value="desktop" style={{ width: '33.33%', textAlign: 'center' }}>
-                    <DesktopOutlined /> Desktop
-                  </Radio.Button>
-                  <Radio.Button value="tablet" style={{ width: '33.33%', textAlign: 'center' }}>
-                    <TabletOutlined /> Tablet
-                  </Radio.Button>
-                  <Radio.Button value="mobile" style={{ width: '33.33%', textAlign: 'center' }}>
-                    <MobileFilled /> Mobile
-                  </Radio.Button>
-                </Radio.Group>
-              </div>
-              <div>
-                <Text type="secondary" className="block mb-1">Zoom Level: {zoomLevel}%</Text>
-                <div className="flex items-center">
-                  <Button 
-                    icon={<CompressOutlined />} 
-                    onClick={() => handleZoom(zoomLevel - 10)}
-                    disabled={zoomLevel <= 50}
-                    size="small"
-                  />
-                  <Slider 
-                    min={50} 
-                    max={150} 
-                    value={zoomLevel} 
-                    onChange={handleZoom} 
-                    className="mx-2 flex-grow"
-                  />
-                  <Button 
-                    icon={<ExpandOutlined />} 
-                    onClick={() => handleZoom(zoomLevel + 10)}
-                    disabled={zoomLevel >= 150}
-                    size="small"
-                  />
-                </div>
-              </div>
-            </Panel>
-          </Collapse>
+          <Collapse 
+            defaultActiveKey={['basic']} 
+            bordered={false} 
+            className="bg-transparent"
+            items={[
+              {
+                key: 'basic',
+                label: 'Basic Information',
+                className: 'site-collapse-custom-panel',
+                children: (
+                  <>
+                    <div className="mb-3">
+                      <Text type="secondary" className="block text-xs">Template ID</Text>
+                      <Text strong className="word-break-all">{templateId}</Text>
+                    </div>
+                    <div className="mb-3">
+                      <Text type="secondary" className="block text-xs">Template Name</Text>
+                      <Text>{templateName}</Text>
+                    </div>
+                    <div>
+                      <Text type="secondary" className="block text-xs">Variables</Text>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {availableVariables.map(variable => (
+                          <Tag key={variable} color="blue">
+                            {`{{${variable}}}`}
+                          </Tag>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ),
+              },
+              {
+                key: 'preview',
+                label: 'Preview Settings',
+                className: 'site-collapse-custom-panel',
+                children: (
+                  <>
+                    <div className="mb-3">
+                      <Text type="secondary" className="block mb-1">Device Preview</Text>
+                      <Radio.Group 
+                        value={viewMode} 
+                        onChange={(e) => setViewMode(e.target.value)}
+                        optionType="button"
+                        buttonStyle="solid"
+                        size="small"
+                        className="w-full"
+                      >
+                        <Radio.Button value="desktop" style={{ width: '33.33%', textAlign: 'center' }}>
+                          <DesktopOutlined /> Desktop
+                        </Radio.Button>
+                        <Radio.Button value="tablet" style={{ width: '33.33%', textAlign: 'center' }}>
+                          <TabletOutlined /> Tablet
+                        </Radio.Button>
+                        <Radio.Button value="mobile" style={{ width: '33.33%', textAlign: 'center' }}>
+                          <MobileFilled /> Mobile
+                        </Radio.Button>
+                      </Radio.Group>
+                    </div>
+                    <div>
+                      <Text type="secondary" className="block mb-1">Zoom Level: {zoomLevel}%</Text>
+                      <div className="flex items-center">
+                        <Button 
+                          icon={<CompressOutlined />} 
+                          onClick={() => handleZoom(zoomLevel - 10)}
+                          disabled={zoomLevel <= 50}
+                          size="small"
+                        />
+                        <Slider 
+                          min={50} 
+                          max={150} 
+                          value={zoomLevel} 
+                          onChange={handleZoom} 
+                          className="mx-2 flex-grow"
+                        />
+                        <Button 
+                          icon={<ExpandOutlined />} 
+                          onClick={() => handleZoom(zoomLevel + 10)}
+                          disabled={zoomLevel >= 150}
+                          size="small"
+                        />
+                      </div>
+                    </div>
+                  </>
+                ),
+              },
+            ]}
+          />
         </div>
       ),
     },
@@ -397,40 +416,55 @@ export default function EmailPreviewPage() {
   }
 
   return (
-    <Layout className="min-h-screen">
-      <Header className="bg-white px-6 shadow-sm flex items-center">
-        <div className="flex items-center flex-1">
+    <Layout className="min-h-screen bg-slate-50/70">
+      <Header 
+        className="studio-topbar px-4 sm:px-6 py-2.5 flex items-center justify-between border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-40"
+        style={{
+          height: 'auto',
+          lineHeight: 'normal',
+          padding: '10px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'rgba(255, 255, 255, 0.95)',
+        }}
+      >
+        <div className="flex items-center flex-1 gap-3 min-w-0">
           <Button
-            type="primary"
+            type="default"
             icon={<ArrowLeftOutlined />}
             onClick={handleBackToEditor}
-            className="mr-4"
+            className="font-medium shrink-0"
           >
-            Back to Editor
+            Back to Studio
           </Button>
-          <div className="mr-4 print:hidden">
-            <Badge count={availableVariables.length} color="blue" overflowCount={99}>
-              <MailOutlined className="text-xl" />
-            </Badge>
-          </div>
-          <div>
-            <Title level={4} className="mb-0">{templateName}</Title>
-            <Text type="secondary" className="hidden sm:inline-block">Email Template Preview</Text>
+          <div className="hidden sm:flex items-center gap-2.5 border-l border-slate-200 pl-3 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shrink-0">
+              <MailOutlined />
+            </div>
+            <div className="min-w-0">
+              <div className="font-semibold text-slate-900 text-sm leading-snug truncate">
+                {templateName}
+              </div>
+              <div className="text-slate-400 text-xs leading-none">
+                Full Page Email Preview
+              </div>
+            </div>
           </div>
         </div>
         
         <Space className="print:hidden">
           <Dropdown menu={{ items: viewModeItems }} placement="bottomRight">
-            <Button>
-              {viewMode === 'desktop' && <DesktopOutlined />}
-              {viewMode === 'tablet' && <TabletOutlined />}
-              {viewMode === 'mobile' && <MobileFilled />}
-              <span className="ml-2">{viewMode.charAt(0).toUpperCase() + viewMode.slice(1)} View</span>
+            <Button size="small">
+              {viewMode === 'desktop' && <DesktopOutlined className="mr-1" />}
+              {viewMode === 'tablet' && <TabletOutlined className="mr-1" />}
+              {viewMode === 'mobile' && <MobileFilled className="mr-1" />}
+              <span>{viewMode.charAt(0).toUpperCase() + viewMode.slice(1)} View</span>
             </Button>
           </Dropdown>
           
           <Dropdown menu={{ items: exportItems }} placement="bottomRight">
-            <Button type="primary" icon={<DownloadOutlined />}>
+            <Button type="primary" size="small" icon={<DownloadOutlined />}>
               Export
             </Button>
           </Dropdown>
@@ -438,6 +472,7 @@ export default function EmailPreviewPage() {
           <Tooltip title={siderCollapsed ? "Show Options" : "Hide Options"}>
             <Button
               type="text"
+              size="small"
               icon={siderCollapsed ? <SettingOutlined /> : <CompressOutlined />}
               onClick={() => setSiderCollapsed(!siderCollapsed)}
             />
@@ -446,7 +481,7 @@ export default function EmailPreviewPage() {
       </Header>
 
       <Layout>
-        <Content className="py-6 px-4 bg-gray-50">
+        <Content className="email-canvas-viewport py-6 px-4">
           <div className={`
             mx-auto transition-all duration-300 ease-in-out
             ${viewMode === 'desktop' ? 'max-w-5xl' : ''}
