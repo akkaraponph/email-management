@@ -206,6 +206,13 @@
   resolved "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.3.4.tgz"
   integrity sha512-iBr3I5LZNk5/bgl5//iTgD2tcym14MX0Xo7fD//u9dYAEgGzza1y9oywluPtf74YnOswVdH1908aK9xVz7zQTw==
 
+"@playwright/test@^1.51.1", "@playwright/test@^1.65.1":
+  version "1.65.1"
+  resolved "https://registry.npmjs.org/@playwright/test/-/test-1.65.1.tgz"
+  integrity sha512-y+NCIRm2LvY4slUVWvGh1nujJ8RF/hEisIsq2mtUPgdQC4L701bq5hZGMhrpeXjACvwvO9tj5dJqhvM6TP9lbw==
+  dependencies:
+    playwright "1.65.1"
+
 "@popperjs/core@^2.9.0":
   version "2.11.8"
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz"
@@ -1145,6 +1152,18 @@ pkg-types@^2.2.0:
     confbox "^0.3.0"
     exsolve "^1.1.1"
     pathe "^2.0.3"
+
+playwright-core@1.65.1:
+  version "1.65.1"
+  resolved "https://registry.npmjs.org/playwright-core/-/playwright-core-1.65.1.tgz"
+  integrity sha512-hqPpz7blSMPxWVdoeE1yiBSzXsKiVOd2k+kjCvmUywD2GPO2Dd9HfcWnq9NN0GHbNZDFgZ9JfBFr+X5/BLo0qw==
+
+playwright@1.65.1:
+  version "1.65.1"
+  resolved "https://registry.npmjs.org/playwright/-/playwright-1.65.1.tgz"
+  integrity sha512-vJ1FuoOrNwOKHUIVEvSt3jT1L+wjjDpwhwIstKtfvTh8XIG4FG4bIFuvNdMxi81LGfAhUgUZleVFaOLY4RIUUw==
+  dependencies:
+    playwright-core "1.65.1"
 
 postcss@^8.5.16:
   version "8.5.28"

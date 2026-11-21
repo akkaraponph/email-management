@@ -1,5 +1,6 @@
 // src/components/pages/email-preview/EmailPreview.tsx
 "use client"
+import SandboxedEmailPreview from '@/components/SandboxedEmailPreview'
 import { useState, useEffect } from 'react'
 import { PreviewData } from '@/types/email-templates'
 import ExportOptionsComponent from '@/components/editor/sections/export/ExportOptionsComponent'
@@ -101,31 +102,7 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
   };
 
   const handlePrintPreview = () => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Email Template Print Preview</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          @media print {
-            body { padding: 0; }
-          }
-        </style>
-      </head>
-      <body>
-        ${previewHtml}
-        <script>
-          window.onload = function() { window.print(); window.close(); }
-        </script>
-      </body>
-      </html>
-    `);
-    
-    printWindow.document.close();
+    window.print();
   }
 
   const handleUpdatePreviewData = (key: string, value: string) => {
@@ -218,10 +195,7 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
                   <Text className="mt-3 text-xs text-slate-500">Rendering preview with mock data...</Text>
                 </div>
               ) : (
-                <div 
-                  className="prose max-w-none text-slate-800"
-                  dangerouslySetInnerHTML={{ __html: previewHtml }}
-                />
+                <SandboxedEmailPreview title="Full email preview" html={previewHtml} className="w-full min-h-[500px] border-0" />
               )}
             </div>
           </div>

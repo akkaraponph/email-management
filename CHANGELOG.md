@@ -12,6 +12,14 @@ Notable changes to this project are recorded in this file.
 
 - Configured automatic Vercel Git deployments for the `main` branch only.
 
+## 0.1.0
+
+### Security
+
+- Disabled database-backed template API handlers until authentication and owner authorization are available. The browser-local demo remains available.
+- Isolated email previews in sandboxed frames with a restrictive content security policy, and removed unsafe print-window HTML rendering.
+- Added browser and API security regression tests.
+
 ## Earlier changes
 
 The following highlights are reconstructed from the project history; release dates and version boundaries have not been established.

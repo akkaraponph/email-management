@@ -1,3 +1,4 @@
+import { templateApiUnavailable } from '@/lib/template-api-access';
 // src/app/api/templates/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
@@ -15,6 +16,8 @@ type VariableInput = {
 
 // GET /api/templates - Get all templates
 export async function GET(request: NextRequest) {
+  const unavailable = templateApiUnavailable();
+  if (unavailable) return unavailable;
   try {
     const templates = await prisma.emailTemplate.findMany({
       include: {
@@ -35,6 +38,8 @@ export async function GET(request: NextRequest) {
 
 // POST /api/templates - Create a new template
 export async function POST(request: NextRequest) {
+  const unavailable = templateApiUnavailable();
+  if (unavailable) return unavailable;
   try {
     const body = await request.json();
     const { name, description, defaultContent, variables, previewData, userId, folderId } = body;

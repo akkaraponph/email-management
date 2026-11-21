@@ -1,13 +1,14 @@
 {
   "name": "email-management",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "seed": "ts-node -P tsconfig.seed.json prisma/seed.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.24.0",
@@ -32,6 +33,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.18",
