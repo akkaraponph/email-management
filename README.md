@@ -22,6 +22,42 @@ Open [http://localhost:3000](http://localhost:3000). The editor's template servi
 
 Select a template or choose **New Template**, edit its content and click **Save**. Use the variable controls and preview modes to inspect the result. The **Export** menu offers HTML and variable data options. The top-bar export receives the selected template object, which may not reflect recent edits even after saving; check the exported file.
 
+## Demo walkthrough
+
+1. **Choose a template.** The editor opens with the Welcome email. Use the template selector to switch between the three examples, then edit the content and formatting in **Content Studio**.
+
+   ![Content Studio showing the Welcome email](docs/screenshots/01-content-studio.jpg)
+
+2. **Create a template.** Select **New Template**, enter a name and optional description, and choose **Create Template**. The form lists the starter variables.
+
+   ![Create New Template form](docs/screenshots/02-new-template.jpg)
+
+3. **Add a variable.** In **Content Studio**, select **New Variable**, enter a variable key and its details, then select **Create Variable**. Variable tags can be inserted into the email.
+
+   ![Add Variable form](docs/screenshots/03-add-variable.jpg)
+
+4. **Preview while editing.** Choose **Split Live** to see the editor and a preview with mock data. The device controls let you select desktop, tablet, or mobile.
+
+   ![Split Live editor and preview](docs/screenshots/04-split-preview.jpg)
+
+5. **Explore layout settings.** Select **Background & Layout** to view colors, container width, and the background preview. Scroll down to see the whole preview. The **Header & Footer** tab contains additional settings. Database-backed reads and saves are unavailable in this demo.
+
+   ![Background and layout settings](docs/screenshots/05-background-settings.jpg)
+
+   ![Scrolled background preview](docs/screenshots/04-background-preview.jpg)
+
+   ![Header and footer settings](docs/screenshots/06-header-footer.jpg)
+
+6. **Open the full preview.** Select **Full Preview** to test viewport sizes and edit values under **Test Data**. Open **Template Info** to inspect the template name and variables. Select **Back to Studio** to return.
+
+   ![Full email preview with test data](docs/screenshots/07-full-preview.jpg)
+
+   ![Template information in the full preview](docs/screenshots/08-template-info.jpg)
+
+7. **Export.** In the studio, open **Export** to choose an HTML or variable-data export. Check the downloaded file, since the top-bar export can use an older version of the selected template.
+
+   ![Export options](docs/screenshots/09-export.jpg)
+
 ## PostgreSQL-backed API
 
 The repository also contains Prisma-backed API routes. In version 0.1.0, all template API handlers return HTTP 503 because the demo has no authentication or ownership checks. Do not expose the database-backed API until both are implemented and tested. The browser-local template demo remains available without a database.
