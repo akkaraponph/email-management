@@ -16,7 +16,7 @@ A sophisticated email template management system with rich features for creating
 
 ## 🛠️ Technology Stack
 
-- **Frontend Framework**: Next.js 15 with App Router
+- **Frontend Framework**: Next.js 16 with App Router
 - **UI Library**: React 19
 - **Component Library**: Ant Design
 - **Rich Text Editor**: TipTap with custom extensions
@@ -28,9 +28,9 @@ A sophisticated email template management system with rich features for creating
 
 ## 📋 Prerequisites
 
-- Node.js (v18.0.0 or higher)
+- Node.js (v20.9 or higher)
 - PostgreSQL database server (v14 or higher)
-- npm or yarn
+- npm
 
 ## 🚀 Getting Started
 
@@ -38,21 +38,19 @@ A sophisticated email template management system with rich features for creating
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/billowdev/email-management.git
+   git clone https://github.com/akkaraponph/email-management.git
    cd email-management
    ```
 
 2. Install dependencies:
    ```bash
-   npm install
-   # or
-   yarn install
+   npm ci
    ```
 
 3. Set up environment variables:
    ```bash
    # Copy the sample env file and update with your database credentials
-   cp env-sample .env
+   cp .env.example .env
    ```
 
 4. Configure your database connection in `.env`:
@@ -60,24 +58,24 @@ A sophisticated email template management system with rich features for creating
    DATABASE_URL="postgresql://username:password@localhost:5432/email_management?schema=public"
    ```
 
-5. Generate Prisma client and run migrations:
+5. Start PostgreSQL before running migrations. For example, to run a local PostgreSQL 16 container:
    ```bash
-   npx prisma generate
+   docker run --name email-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=email_management -p 5432:5432 -d postgres:16
+   ```
+
+   `npm ci` already generates the Prisma client via `postinstall`. Once the database is running, apply migrations:
+   ```bash
    npx prisma migrate dev
    ```
 
 6. Seed the database with initial data:
    ```bash
    npm run seed
-   # or
-   yarn seed
    ```
 
 7. Start the development server:
    ```bash
    npm run dev
-   # or
-   yarn dev
    ```
 
 8. Access the application at `http://localhost:3000`

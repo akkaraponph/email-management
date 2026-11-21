@@ -48,3 +48,6 @@ next-env.d.ts
 
 # npm is the package manager
 yarn.lock
+
+# Commit the environment template
+!.env.example
