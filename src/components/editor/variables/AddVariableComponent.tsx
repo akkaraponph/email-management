@@ -100,6 +100,7 @@ const AddVariableComponent: React.FC<AddVariableComponentProps> = ({
       </Button>
       
       <Modal
+        forceRender
         title={
           <div>
             <div className="text-base font-semibold text-slate-900">Add Variable</div>

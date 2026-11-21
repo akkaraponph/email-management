@@ -268,6 +268,7 @@ const VariableConfiguration: React.FC<VariableConfigurationProps> = ({
       </Paragraph>
       
       <Modal
+        forceRender
         title={editingVariable ? "Edit Variable" : "Add New Variable"}
         open={isModalVisible}
         onCancel={handleCancel}
