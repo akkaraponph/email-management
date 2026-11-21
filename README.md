@@ -268,7 +268,9 @@ When developing new features, follow these patterns to maintain consistency.
 
 ## 📄 License
 
-[MIT](LICENSE)
+Copyright 2026 Akkarapon Phikulsri.
+
+[Apache License 2.0](LICENSE)
 
 ---
 
