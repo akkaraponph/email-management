@@ -1,0 +1,20 @@
+{
+  "version": "invaris.dev/v1alpha2",
+  "name": "email-management-security-guardrails",
+  "trustMode": "trusted-local",
+  "networkPolicy": "unrestricted",
+  "writablePaths": [".gitignore"],
+  "policies": [
+    {"id": "scan-results-ignored"},
+    {"id": "api-explicit-authorization"},
+    {"id": "no-raw-react-html"}
+  ],
+  "guards": [
+    {"id": "scan-results-ignore", "policyId": "scan-results-ignored", "minInspected": 1, "program": "python3", "args": ["scripts/invaris_guard.py", "scan-results-ignored"]},
+    {"id": "template-api-authorization", "policyId": "api-explicit-authorization", "minInspected": 1, "program": "python3", "args": ["scripts/invaris_guard.py", "api-explicit-authorization"]},
+    {"id": "react-html-sinks", "policyId": "no-raw-react-html", "minInspected": 1, "program": "python3", "args": ["scripts/invaris_guard.py", "no-raw-react-html"]}
+  ],
+  "challenges": [
+    {"id": "remove-scan-ignore", "guard": "scan-results-ignore", "file": ".gitignore", "before": "/.tarosec/static-analysis-results/", "after": "/.tarosec/scan-results-disabled/"}
+  ]
+}

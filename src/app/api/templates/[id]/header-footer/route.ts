@@ -1,9 +1,12 @@
+import { templateApiUnavailable } from '@/lib/template-api-access';
 // src/app/api/templates/[id]/header-footer/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
 // GET /api/templates/:id/header-footer - Get header/footer settings
 export async function GET(request: NextRequest, context: any) {
+  const unavailable = templateApiUnavailable();
+  if (unavailable) return unavailable;
   try {
     const { id: templateId } = await context.params;
     
@@ -43,6 +46,8 @@ export async function GET(request: NextRequest, context: any) {
 
 // PUT /api/templates/:id/header-footer - Update header/footer settings
 export async function PUT(request: NextRequest, context: any) {
+  const unavailable = templateApiUnavailable();
+  if (unavailable) return unavailable;
   try {
     const { id: templateId } = await context.params;
     const settings = await request.json();

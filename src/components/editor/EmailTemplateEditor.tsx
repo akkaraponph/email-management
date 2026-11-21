@@ -2,6 +2,7 @@
 
 "use client"
 import { useEditor, EditorContent } from '@tiptap/react'
+import SandboxedEmailPreview from '@/components/SandboxedEmailPreview';
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import TextAlign from '@tiptap/extension-text-align'
@@ -168,6 +169,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   useEffect(() => {
     if (editor && initialContent) {
       editor.commands.setContent(initialContent);
+      setHtmlOutput(editor.getHTML());
     }
   }, [editor, initialContent, templateId]);
 
@@ -821,10 +823,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                       </span>
                       <span className="text-indigo-500 font-mono text-[10px]">Real-time Interpolation</span>
                     </div>
-                    <div 
-                      className="p-4 sm:p-5 min-h-[calc(100vh-270px)] prose max-w-none overflow-y-auto bg-white flex-1 text-slate-800"
-                      dangerouslySetInnerHTML={{ __html: getPreviewHTML() }}
-                    />
+                    <SandboxedEmailPreview title="Live email preview" html={getPreviewHTML()} className="w-full min-h-[calc(100vh-270px)] bg-white flex-1 border-0" />
                   </div>
                 </div>
               )}
@@ -849,10 +848,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                       To: {localPreviewData.email || 'recipient@example.com'}
                     </div>
                   </div>
-                  <div 
-                    className="p-4 sm:p-6 min-h-[calc(100vh-270px)] prose max-w-none overflow-y-auto bg-white rounded-b-lg text-slate-800"
-                    dangerouslySetInnerHTML={{ __html: getPreviewHTML() }}
-                  />
+                  <SandboxedEmailPreview title="Email preview" html={getPreviewHTML()} className="w-full min-h-[calc(100vh-270px)] bg-white rounded-b-lg border-0" />
                 </div>
               )}
             </div>
