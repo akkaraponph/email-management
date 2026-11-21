@@ -2,23 +2,31 @@
 
 Notable changes to this project are recorded in this file.
 
-## Unreleased
+## [0.1.0] - 2026-11-21
 
 ### Added
 
+- Added GitHub Actions validation for pull requests and pushes to main.
+- Added lint, type-check, test, and Prisma client generation scripts.
 - Added the Apache License 2.0 and a copyright notice for Akkarapon Phikulsri.
 
 ### Changed
 
+- Standardized installs on npm and documented PostgreSQL setup.
+- Pinned Node 22 for development and CI and moved TypeScript scripts to tsx.
 - Configured automatic Vercel Git deployments for the `main` branch only.
 
-## 0.1.0
+### Fixed
+
+- Replaced the removed Next.js lint command and corrected setup prerequisites.
+- Included Linux native dependencies needed by CI builds.
 
 ### Security
 
 - Disabled database-backed template API handlers until authentication and owner authorization are available. The browser-local demo remains available.
 - Isolated email previews in sandboxed frames with a restrictive content security policy, and removed unsafe print-window HTML rendering.
 - Added browser and API security regression tests.
+
 
 ## Earlier changes
 
@@ -40,3 +48,5 @@ The following highlights are reconstructed from the project history; release dat
 
 - Fixed email preview and footer display issues.
 - Fixed background saving, editor updates, and API errors.
+
+[0.1.0]: https://github.com/akkaraponph/email-management/releases/tag/v0.1.0

@@ -4,7 +4,14 @@ An email template editor example built with Next.js, React, TipTap, Ant Design a
 
 ## Run locally
 
-Install a Node.js version supported by the Next.js version in `package-lock.json`, then run:
+Install Node.js 20.9 or newer (Node 22 is recommended) and npm, then run:
+
+```sh
+git clone https://github.com/akkaraponph/email-management.git
+cd email-management
+```
+
+Install dependencies and start the browser-local demo:
 
 ```sh
 npm ci
@@ -19,16 +26,21 @@ Select a template or choose **New Template**, edit its content and click **Save*
 
 The repository also contains Prisma-backed API routes. In version 0.1.0, all template API handlers return HTTP 503 because the demo has no authentication or ownership checks. Do not expose the database-backed API until both are implemented and tested. The browser-local template demo remains available without a database.
 
-To work on the database schema locally, create a PostgreSQL database and configure `DATABASE_URL` in `.env`:
+To work on the database schema locally, install PostgreSQL 14 or newer, then configure `DATABASE_URL` in `.env`. For example, start PostgreSQL 16 with Docker:
 
 ```sh
-cp env-sample .env
+docker run --name email-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=email_management -p 5432:5432 -d postgres:16
+```
+
+Ensure PostgreSQL is running before applying migrations:
+
+```sh
+cp .env.example .env
 # Set DATABASE_URL in .env to your PostgreSQL connection string.
-npx prisma generate
 npx prisma migrate dev
 ```
 
-`npm run seed` inserts example records into the database. The editor's template service uses browser storage independently of those database records. Background and header/footer settings attempt to call the disabled API, so database-backed reads and saves are unavailable. See [the Prisma schema](prisma/schema.prisma) and [API routes](src/app/api/templates).
+`npm ci` generates the Prisma client through `postinstall`. `npm run seed` inserts example records into the database. The editor's template service uses browser storage independently of those database records. Background and header/footer settings attempt to call the disabled API, so database-backed reads and saves are unavailable. See [the Prisma schema](prisma/schema.prisma) and [API routes](src/app/api/templates).
 
 ## Security and tests
 
