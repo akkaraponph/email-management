@@ -1,3 +1,4 @@
+import { templateApiUnavailable } from '@/lib/template-api-access';
 // src/app/api/templates/[id]/variables/[variableId]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
@@ -13,6 +14,8 @@ export async function GET(
   context:any,
   // { params }: { params: RouteParams }
 ) {
+  const unavailable = templateApiUnavailable();
+  if (unavailable) return unavailable;
   try {
     // const { id: templateId, variableId } = params;
     
@@ -56,6 +59,8 @@ export async function PUT(
   context: any,
   // { params }: { params: RouteParams }
 ) {
+  const unavailable = templateApiUnavailable();
+  if (unavailable) return unavailable;
   try {
     // const { searchParams } = new URL(request.url);
     // const templateId = searchParams.get("id") as string;
@@ -129,6 +134,8 @@ export async function DELETE(
   context:any,
   // { params }: { params: RouteParams }
 ) {
+  const unavailable = templateApiUnavailable();
+  if (unavailable) return unavailable;
   try {
     // const { searchParams } = new URL(request.url);
     // const templateId = searchParams.get("id") as string;

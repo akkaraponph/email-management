@@ -39,7 +39,7 @@
   },
   "src/components/editor/EmailTemplateEditor.tsx": {
     "react-hooks/set-state-in-effect": {
-      "count": 3
+      "count": 4
     },
     "react-hooks/static-components": {
       "count": 1

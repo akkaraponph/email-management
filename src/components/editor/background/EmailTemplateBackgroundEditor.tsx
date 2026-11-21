@@ -1,5 +1,6 @@
 // src/components/EmailTemplateBackgroundEditor.tsx
 "use client"
+import SandboxedEmailPreview from '@/components/SandboxedEmailPreview';
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Tabs, Space, Collapse, ColorPicker, Input, Button, message, Spin } from 'antd';
 import type { TabsProps } from 'antd';
@@ -638,12 +639,7 @@ const updatePreview = async () => {
               <Text className="ml-2">Updating preview...</Text>
             </div>
           ) : (
-            <div className="h-full overflow-auto">
-              <div 
-                dangerouslySetInnerHTML={{ __html: previewHtml }} 
-                style={{ transform: 'scale(0.7)', transformOrigin: 'top left' }}
-              />
-            </div>
+            <SandboxedEmailPreview title="Background email preview" html={previewHtml} className="w-full h-full border-0" />
           )}
         </div>
         <Text className="text-xs text-gray-500 block mt-2">

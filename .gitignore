@@ -51,3 +51,7 @@ yarn.lock
 
 # Commit the environment template
 !.env.example
+
+# security scan results
+/.tarosec/static-analysis-results/
+/.tarosec/workspace/static-analysis-results/
